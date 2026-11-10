@@ -22,7 +22,10 @@ const HOST_DOC = (function () {
 })();
 
 const here = import.meta.url;
-const theme = (new URL(here).searchParams.get('theme') || 'manfan').replace(/[^\w-]/g, '');
+const params = new URL(here).searchParams;
+const theme = (params.get('theme') || 'manfan').replace(/[^\w-]/g, '');
+/* fields=manfan → dist/fields/manfan.json；也可以是完整 URL */
+const fieldsParam = (params.get('fields') || '').trim();
 const base = new URL('./', here);
 
 /* ---------- 单例 ---------- */
@@ -263,16 +266,38 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.3.0 · theme=' + theme);
+  console.log('[金手指] v0.4.0 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
 
   loadTheme(theme);
-
-  // 先把球挂出来：核心挂了也能看见东西，不至于白等
   const shell = buildShell();
   const note = (html) => {
     shell.panel.innerHTML =
       '<div style="padding:14px 8px;font-size:12px;line-height:1.9;color:#625349">' + html + '</div>';
   };
+
+  /* ---- 表单模式 ---- */
+  if (fieldsParam) {
+    note('正在加载字段配置…');
+    const cfgUrl = /^https?:/i.test(fieldsParam)
+      ? fieldsParam
+      : new URL('fields/' + fieldsParam.replace(/[^\w-]/g, '') + '.json', base).href;
+    try {
+      const res = await fetch(cfgUrl);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const cfg = await res.json();
+      const mod = await import(new URL('form.js', base).href);
+      shell.panel.innerHTML = '';
+      mod.mountForm({ panel: shell.panel, hostDoc: HOST_DOC, config: cfg });
+      return;
+    } catch (e) {
+      console.error('[金手指] 表单模式失败', e);
+      note('字段配置没加载起来。<br><span style="opacity:.7">' + String(e && e.message || e)
+        + '</span><br>检查 fields 参数，或改用不带 fields 的地址走变量树。');
+      return;
+    }
+  }
+
+  /* ---- 树模式（原版变量树） ---- */
   note('正在加载变量管理器…');
 
   try {

@@ -13,10 +13,19 @@
 角色卡的 Tavern Helper 脚本里只写一行：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.3.0/dist/index.js?theme=manfan'
+// 表单模式：卡里给一份字段配置，面板变成表单
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.4.0/dist/index.js?theme=manfan&fields=manfan'
+
+// 树模式：什么都不给，退回原版变量树
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.4.0/dist/index.js?theme=manfan'
 ```
 
-换主题改 `theme=` 即可。不写就是 `manfan`。
+两个参数都可省：
+
+| 参数 | 作用 | 省略时 |
+|---|---|---|
+| `theme` | 主题名，对应 `dist/themes/<名>.css` | `manfan` |
+| `fields` | 字段配置名（`dist/fields/<名>.json`），或完整 URL | 走变量树 |
 
 **建议锁版本**，避免 jsdelivr 缓存：
 
@@ -66,7 +75,7 @@ import dist/index.js
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.3.0 · theme=manfan
+[金手指] v0.4.0 · theme=manfan · fields=manfan
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
@@ -75,6 +84,35 @@ import dist/index.js
 - **有这行，但球没出来** → 多半是 DOM 挂在了 iframe 里。v0.1.1 已改用 `window.parent.document`，如果仍然没有，说明父窗口访问被拦，控制台会有报错。
 - **球出来了，点开是空的** → 看面板里的提示：要么核心加载失败（网络），要么没找到挂载点。
 - **没找到挂载点** → 先手动打开一次「扩展设置」面板，让原版完成挂载，再刷新页面。
+
+## 字段配置（表单模式）
+
+给一份 JSON，面板就从「变量树」变成「表单」：每个字段有中文标签、合适的控件、示例提示，超出范围当场夹回。
+
+```json
+{
+  "版本": 1,
+  "卡": "迷宫饭 · 变量",
+  "分组": [
+    {
+      "名": "时间与地点",
+      "字段": [
+        { "路径": "世界.时刻.年", "标签": "年", "类型": "number", "min": 1, "max": 9999 },
+        { "路径": "世界.位置.大区域", "标签": "大区域", "类型": "text", "提示": "岛 / 东方大陆" },
+        { "路径": "玩家.身份.种族", "标签": "种族", "类型": "select", "选项": ["长身人", "矮人"] },
+        { "路径": "玩家.状态.体虚", "标签": "体虚", "类型": "bool" }
+      ]
+    }
+  ]
+}
+```
+
+- 控件四种：`text` / `number` / `select` / `bool`
+- 只动配置里点名的路径，其它字段一律不碰
+- 保存前会重新读一次楼层，避免用旧快照覆盖
+- 面板顶部可换楼层号，改历史楼的变量也行
+
+现成的配置：`dist/fields/manfan.json`（迷宫饭 30 个字段）。
 
 ## 悬浮球
 
