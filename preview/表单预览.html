@@ -94,6 +94,9 @@
   .mz-r input[type=text],.mz-r select{width:100%}
   .mz-r input[type=checkbox]{width:15px;height:15px;accent-color:#8c5a2b}
   .mz-hint{grid-column:2;font-size:10.5px;color:#8f8270;margin-top:-2px}
+  .mz-ro{display:inline-block;min-width:44px;padding:3px 8px;border-radius:2px;
+    border:1px dashed #c8c3b1;background:#e8d9bd;color:#796a5c;
+    font-variant-numeric:tabular-nums;font-size:12px}
   .mz-c2{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin:6px 0}
   .mz-mini{display:flex;flex-direction:column;gap:3px;min-width:0}
   .mz-mini>label{font-size:11px;color:#625349}
@@ -183,9 +186,9 @@ const CONFIG = {
         { "路径": "玩家.身份.生活职业", "标签": "生活职业", "类型": "text", "提示": "没有就留空" },
         { "路径": "玩家.身份.副业", "标签": "副业", "类型": "text", "提示": "没有就留空（存 null）", "空为null": true },
         { "路径": "玩家.生命.当前HP", "标签": "当前 HP", "类型": "number", "min": 0, "max": 999 },
-        { "路径": "玩家.生命.最大HP", "标签": "最大 HP", "类型": "number", "min": 1, "max": 999, "提示": "20 + 体魄÷2" },
+        { "路径": "玩家.生命.最大HP", "标签": "最大 HP", "类型": "number", "min": 1, "max": 999, "只读": true, "提示": "由体魄推导：20 + 体魄÷2。改体魄后由 AI 结算。" },
         { "路径": "玩家.生命.当前MP", "标签": "当前 MP", "类型": "number", "min": 0, "max": 999 },
-        { "路径": "玩家.生命.最大MP", "标签": "最大 MP", "类型": "number", "min": 0, "max": 999, "提示": "学识÷2 + 意志÷4" },
+        { "路径": "玩家.生命.最大MP", "标签": "最大 MP", "类型": "number", "min": 0, "max": 999, "只读": true, "提示": "由学识与意志推导：学识÷2 + 意志÷4。" },
         { "路径": "玩家.金钱", "标签": "金钱", "类型": "number", "min": 0, "max": 999999 },
         { "路径": "玩家.状态.体虚", "标签": "体虚", "类型": "bool", "提示": "连着两天没吃饱才会亮" }
       ]},
@@ -362,6 +365,12 @@ function markDirty() { dirty = true; saveBtn.disabled = false; saveBtn.textConte
 
 function control(f, value, onSet) {
   let el;
+  if (f.只读) {
+    el = document.createElement('span');
+    el.className = 'mz-ro';
+    el.textContent = (value == null || value === '') ? '—' : String(value);
+    return el;
+  }
   if (f.类型 === 'select') {
     const opts = (f.选项 || []).map((o) => (o && typeof o === 'object')
       ? { 标签: String(o.标签), 值: o.值 } : { 标签: String(o), 值: o });
