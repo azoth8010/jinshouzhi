@@ -59,9 +59,20 @@ export function mountForm(ctx) {
       .mz-mini input,.mz-mini select{width:100%}
       .mz-mini input[type=checkbox]{width:14px;height:14px;flex:0 0 auto}
       .mz-ck{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;line-height:1.5;
-        color:#625349;cursor:pointer;padding:2px 0}
-      .mz-ck input{width:14px;height:14px;margin:1px 0 0;flex:0 0 auto;accent-color:#8c5a2b}
+        color:#8f8270;cursor:pointer;padding:2px 0}
       .mz-ck span{min-width:0;word-break:break-word}
+      /* 自绘勾选框：系统默认框在深色主题下几乎看不出勾没勾 */
+      .mz-cb{appearance:none;-webkit-appearance:none;width:15px;height:15px;flex:0 0 15px;
+        margin:1px 0 0;border:1px solid #ba8e4a;border-radius:2px;background:#fffbeb;
+        position:relative;cursor:pointer;transition:background .12s,border-color .12s}
+      .mz-cb:hover{border-color:#8c5a2b}
+      .mz-cb:checked{background:#8c5a2b;border-color:#743e1d}
+      .mz-cb:checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;
+        border:solid #f9f1df;border-width:0 2px 2px 0;transform:rotate(45deg)}
+      .mz-cb:focus-visible{outline:2px solid #d8be79;outline-offset:2px}
+      .mz-ck:has(.mz-cb:checked){color:#352722}
+      .mz-ck:has(.mz-cb:checked) span{font-weight:600}
+      .mz-g>h3 .mz-count{float:right;font-weight:400;color:#8f8270;letter-spacing:0}
 
       .mz-map{display:flex;flex-direction:column;gap:7px;margin:6px 0}
       .mz-item{border:1px solid var(--mz-jsz-line,#c8c3b1);border-left:2px solid #d8be79;
@@ -179,7 +190,9 @@ export function mountForm(ctx) {
     } else if (f.类型 === 'bool') {
       el = hostDoc.createElement('input');
       el.type = 'checkbox';
-      el.checked = !!value;
+      el.className = 'mz-cb';
+      // 变量里可能是 true / "true" / 1 / "1"，一律当勾上
+      el.checked = value === true || value === 1 || value === 'true' || value === '1';
     } else if (f.类型 === 'number') {
       el = hostDoc.createElement('input');
       el.type = 'number';
@@ -305,6 +318,17 @@ export function mountForm(ctx) {
     if (g.名) {
       const h = hostDoc.createElement('h3');
       h.textContent = g.名;
+      const fs = g.字段 || [];
+      if (fs.length > 1 && fs.every((x) => x.类型 === 'bool')) {
+        const done = fs.filter((x) => {
+          const v = getPath(draft, x.路径);
+          return v === true || v === 1 || v === 'true' || v === '1';
+        }).length;
+        const c = hostDoc.createElement('span');
+        c.className = 'mz-count';
+        c.textContent = '已达成 ' + done + ' / ' + fs.length;
+        h.appendChild(c);
+      }
       sec.appendChild(h);
     }
 
