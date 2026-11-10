@@ -13,7 +13,7 @@
 角色卡的 Tavern Helper 脚本里只写一行：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.1.1/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.2.0/dist/index.js?theme=manfan'
 ```
 
 换主题改 `theme=` 即可。不写就是 `manfan`。
@@ -49,22 +49,27 @@ import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?them
 
 ```
 import dist/index.js
+  ├─ 先建球（核心挂了也能看见）
   ├─ 注入主题 CSS
-  ├─ import 原版核心（远程）
-  ├─ 等它挂进 #extensions_settings2
+  ├─ import 本仓库内的核心 dist/core/variable-manager.js
+  ├─ 等它挂进 #extensions_settings2（父文档与 iframe 都查）
   ├─ 把那个节点搬进浮层
-  └─ 建悬浮球，点击开合
+  └─ 套主题
 ```
+
+**核心是内嵌的。** 原仓库路径已 404，且原作者已授权二改与再分发，所以副本随本仓库走。
 
 **搬节点，不重写。** 原版是打包产物，逻辑十二万字符；搬 DOM 能把「面板」变成「浮层」，功能一行不改。
 
 ## 排错
 
-球没出来，先看控制台有没有这一行：
+球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.1.1 · theme=manfan
+[金手指] v0.2.0 · theme=manfan
 ```
+
+如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
 
 - **没有这行** → 脚本根本没跑。检查酒馆助手是否启用、卡的脚本里 import 地址是否被改过。
 - **有这行，但球没出来** → 多半是 DOM 挂在了 iframe 里。v0.1.1 已改用 `window.parent.document`，如果仍然没有，说明父窗口访问被拦，控制台会有报错。

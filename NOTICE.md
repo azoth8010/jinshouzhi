@@ -4,8 +4,10 @@
 
 - 原作者：**络络**（GitHub [@lolodesu_](https://github.com/lolodesu_)，展示名 lolo-desu）
 - 原始仓库：<https://github.com/lolo-desu/lolocard>
-- 原始入口：`dist/变量管理器/index.js`
-- 原协议：以原作者仓库声明为准；本仓库未修改其源码，仅在运行时加载
+- 原帖：<https://discord.com/channels/1134557553011998840/1436643812163453069>
+- **已获原作者授权**：允许二改与再分发
+- 原仓库 `@main` 路径于 2026-11-10 返回 404，故改为**随本仓库分发副本**：
+  `dist/core/variable-manager.js`（完整副本，未压缩，未改逻辑）
 
 本仓库做的是**外壳与主题**：把原版挂载出来的节点搬进浮层、加一个悬浮球、提供可换的 CSS 变量皮肤。原版功能一行未改。
 

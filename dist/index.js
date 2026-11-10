@@ -9,8 +9,8 @@
  * 功能一行没改——原版是打包产物，重写不如搬节点。
  */
 
-const CORE_URL =
-  'https://testingcf.jsdelivr.net/gh/lolo-desu/lolocard@main/dist/%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86%E5%99%A8/index.js';
+/* 原版路径已失效（404），改为随仓库分发；文件见 dist/core/ */
+const CORE_PATH = 'core/variable-manager.js';
 
 const HOST_ID = 'mz-jsz-host';
 const MOUNT_WAIT_MS = 8000;
@@ -51,7 +51,18 @@ function loadTheme(name) {
 
 /* ---------- 找原版挂载出来的节点 ---------- */
 function findCoreNode() {
-  const box = HOST_DOC.getElementById('extensions_settings2');
+  // 核心用 TH 的 $，可能落在父文档，也可能落在脚本自己的 iframe 里，两处都看
+  const docs = [HOST_DOC];
+  if (document !== HOST_DOC) docs.push(document);
+  for (const d of docs) {
+    const found = findInDoc(d);
+    if (found) return found;
+  }
+  return null;
+}
+
+function findInDoc(d) {
+  const box = d.getElementById && d.getElementById('extensions_settings2');
   if (!box) return null;
   // 原版会 append 一个带 script_id 的 div；取最后一个没被搬走的就是它
   const nodes = box.querySelectorAll(':scope > div[script_id]');
@@ -142,7 +153,7 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.1.1 · theme=' + theme);
+  console.log('[金手指] v0.2.0 · theme=' + theme);
 
   loadTheme(theme);
 
@@ -155,7 +166,7 @@ async function boot() {
   note('正在加载变量管理器…');
 
   try {
-    await import(CORE_URL);
+    await import(new URL(CORE_PATH, base).href);
   } catch (e) {
     console.error('[金手指] 原版核心加载失败', e);
     note('变量管理器加载失败。<br>多半是网络拿不到 jsdelivr，或原版改了路径。<br>'
