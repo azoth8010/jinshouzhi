@@ -70,6 +70,28 @@ import dist/index.js
 
 **搬节点，不重写。** 原版是打包产物，逻辑十二万字符；搬 DOM 能把「面板」变成「浮层」，功能一行不改。
 
+## 换源（加载失败时）
+
+jsdelivr 有三个入口，中国大陆走 `testingcf` 最快，但它会出现「同一版本里 A 文件能取、B 文件 404」的脏缓存。稳妥的写法是逐个降级：
+
+```js
+const V = 'v0.6.0';
+const P = `azoth8010/jinshouzhi@${V}/dist/index.js?theme=manfan&fields=manfan`;
+const HOSTS = [
+  'https://testingcf.jsdelivr.net/gh/',
+  'https://cdn.jsdelivr.net/gh/',
+  'https://fastly.jsdelivr.net/gh/',
+];
+(async () => {
+  for (const h of HOSTS) {
+    try { await import(h + P); return; } catch (e) { console.warn('[金手指] 换源', h); }
+  }
+  console.error('[金手指] 三个源都没拿到');
+})();
+```
+
+**注意**：`import()` 动态导入才能 try/catch，静态 `import` 做不到。
+
 ## 排错
 
 球没出来时，先确认加载的是哪一版——控制台应出现：
