@@ -52,9 +52,8 @@ export function mountForm(ctx) {
       .mz-r input[type=text],.mz-r select{width:100%}
       .mz-r input[type=checkbox]{width:15px;height:15px;accent-color:#8c5a2b}
       .mz-hint{grid-column:2;font-size:10.5px;color:#8f8270;margin-top:-2px}
-      .mz-ro{display:inline-block;min-width:44px;padding:3px 8px;border-radius:2px;
-        border:1px dashed var(--mz-jsz-line,#c8c3b1);background:var(--paper-deep,rgba(0,0,0,.04));
-        color:#796a5c;font-variant-numeric:tabular-nums;font-size:12px}
+      .mz-ro{display:inline-block;min-width:38px;font:12px/1.5 inherit;color:#625349;
+        font-variant-numeric:tabular-nums;padding:4px 0}
 
       .mz-c2{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin:6px 0}
       .mz-mini{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -183,11 +182,11 @@ export function mountForm(ctx) {
   function control(f, value, onSet) {
     let el;
     if (f.只读) {
-      el = hostDoc.createElement('span');
-      el.className = 'mz-ro';
-      el.textContent = (value == null || value === '') ? '—' : String(value);
-      el.setAttribute('aria-label', f.标签 || f.路径);
-      return el;
+      // 由别的字段推算出来的值：只显示，不提供输入
+      const ro = hostDoc.createElement('span');
+      ro.className = 'mz-ro';
+      ro.textContent = (value == null || value === '') ? '—' : String(value);
+      return ro;
     }
     if (f.类型 === 'select') {
       // 选项可以是字符串，也可以是 {标签, 值}——值允许是 true / "changed" 这类非字符串
