@@ -253,7 +253,12 @@ export function mountForm(ctx) {
     const wrap = hostDoc.createElement('div');
     wrap.className = 'mz-map';
     const obj = getPath(draft, f.路径);
-    const keys = obj && typeof obj === 'object' ? Object.keys(obj) : [];
+    // 固定键：数据里没有也照常列出（剧情节点 23 条就是这样）
+    const 固定 = Array.isArray(f.固定键) ? f.固定键 : [];
+    const keys = 固定.slice();
+    if (obj && typeof obj === 'object') {
+      Object.keys(obj).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+    }
 
     if (!keys.length) {
       const e = hostDoc.createElement('div');
