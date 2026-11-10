@@ -1,0 +1,23 @@
+/* 主题骨架 —— 新主题先 import 它，再改自己那一组变量。
+   悬浮球外壳读 --mz-jsz-*；原版组件读 --SmartTheme*。
+   两套都只改变量，不碰类名。 */
+
+:root {
+  --mz-jsz-surface: #f9f1df;
+  --mz-jsz-ink: #352722;
+  --mz-jsz-line: #c8c3b1;
+  --mz-jsz-ball: #8c5a2b;
+  --mz-jsz-ball-ink: #f9f1df;
+  --mz-jsz-font: -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.th-variable-manager[data-mz-theme] {
+  border-radius: 4px;
+  font-family: var(--mz-jsz-font);
+}
+
+/* 原版部分按钮写死了圆角与字号，这里统一一次 */
+.th-variable-manager[data-mz-theme] .th-toolbar-btn,
+.th-variable-manager[data-mz-theme] .search-field {
+  border-radius: 3px !important;
+}

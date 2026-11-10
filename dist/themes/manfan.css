@@ -1,0 +1,115 @@
+@import url('./_base.css');
+
+/* 迷宫饭 · 羊皮纸
+   与 st-frontend 的 tokens.css 同一套色值，改主题时只动这一段。 */
+
+:root {
+  --mz-jsz-surface: #f9f1df;
+  --mz-jsz-ink: #352722;
+  --mz-jsz-line: #ba8e4a;
+  --mz-jsz-ball: #8c5a2b;
+  --mz-jsz-ball-ink: #f9f1df;
+  --mz-jsz-font: "Noto Serif SC", "Source Han Serif SC", "Songti SC", -apple-system, sans-serif;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] {
+  --SmartThemeBorderColor: #c8c3b1;
+  --SmartThemeBodyColor: #352722;
+  --SmartThemeEmColor: #8c5a2b;
+  --SmartThemeQuoteColor: #756342;
+  --SmartThemeBlurTintColor: #f3e8d2;
+  --ui-color-sec: #f3e8d2;
+
+  background: transparent;
+  color: #352722;
+}
+
+/* 工具条：纸张感，去掉原版那层透明黑 */
+.th-variable-manager[data-mz-theme="manfan"] .th-toolbar-root {
+  border: 1px solid #dcc9a5 !important;
+  background: #f3e8d2 !important;
+  border-radius: 3px !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .th-toolbar-btn {
+  border: 1px solid #c8c3b1 !important;
+  background: #f9f1df !important;
+  color: #625349 !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .th-toolbar-btn:hover:not(:disabled) {
+  border-color: #ba8e4a !important;
+  background: #f3e6aa !important;
+  color: #743e1d !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .search-field {
+  border: 1px solid #c8c3b1 !important;
+  background: #f9f1df !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .search-field:focus-within {
+  border-color: #ba8e4a !important;
+  background: #fffbeb !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .search-field input {
+  color: #352722 !important;
+}
+
+/* 树节点 */
+.th-variable-manager[data-mz-theme="manfan"] .tree-node,
+.th-variable-manager[data-mz-theme="manfan"] .tree-node__row {
+  border-color: #dcc9a5 !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] .tree-node:hover {
+  background: #f3e8d2 !important;
+}
+
+/* 输入框 */
+.th-variable-manager[data-mz-theme="manfan"] input,
+.th-variable-manager[data-mz-theme="manfan"] textarea,
+.th-variable-manager[data-mz-theme="manfan"] select {
+  background: #fffbeb !important;
+  border: 1px solid #c8c3b1 !important;
+  color: #352722 !important;
+  border-radius: 2px !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] input:focus,
+.th-variable-manager[data-mz-theme="manfan"] textarea:focus,
+.th-variable-manager[data-mz-theme="manfan"] select:focus {
+  outline: 2px solid #d8be79;
+  outline-offset: 1px;
+}
+
+/* 数值类型色：暖色系，别用默认的霓虹 */
+.th-variable-manager[data-mz-theme="manfan"] {
+  --string: #4a6b3a;
+  --object: #8c5a2b;
+  --editing: #ba8e4a;
+  --changed: #a33a2a;
+  --adding: #3a5a2e;
+  --placeholder: #aca391;
+}
+
+/* 分隔线与滚动条 */
+.th-variable-manager[data-mz-theme="manfan"] hr {
+  border: 0;
+  border-top: 1px dashed #dcc9a5 !important;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] ::-webkit-scrollbar-thumb {
+  background: #d8be79;
+  border-radius: 4px;
+}
+
+.th-variable-manager[data-mz-theme="manfan"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
