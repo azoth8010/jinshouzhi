@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>金手指 · 表单模式 静态预览</title>
+<title>迷宫饭金手指 · 静态预览 v2</title>
 <style>
   :root{
     --paper:#f3e8d2; --paper2:#f9f1df; --sunken:#e8d9bd; --deep:#dcc9a5;
     --line:#c8c3b1; --line2:#ba8e4a; --ink:#352722; --ink2:#625349; --ink3:#756342; --muted:#8f8270;
-    --jade:#4a6b3a;
     --mz-jsz-surface:#f9f1df; --mz-jsz-ink:#352722; --mz-jsz-line:#c8c3b1;
     --mz-jsz-ball:#8c5a2b; --mz-jsz-ball-ink:#f9f1df;
     --mz-jsz-font:-apple-system,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
@@ -16,26 +15,24 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;background:#e6dcc8;color:var(--ink);font-family:var(--mz-jsz-font);
-       display:flex;flex-direction:column;align-items:center;padding:22px 16px 90px}
+       display:flex;flex-direction:column;align-items:center;padding:20px 16px 90px}
 
-  /* ---- 顶部说明（真机没有） ---- */
   .demo{width:100%;max-width:980px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
-        margin-bottom:14px;font:11px var(--mono);color:#7a6a54}
+        margin-bottom:12px;font:11px var(--mono);color:#7a6a54}
   .demo button{font:11px var(--mz-jsz-font);padding:4px 10px;border:1px solid var(--line);
         border-radius:2px;background:var(--paper);color:#5c4a38;cursor:pointer}
   .demo button[aria-pressed="true"]{background:#8c5a2b;border-color:#743e1d;color:#f9f1df}
 
-  /* ---- 假聊天区 ---- */
   .stage{width:100%;max-width:980px;display:flex;justify-content:center}
   .stage[data-w="phone"]{max-width:390px}
   .chat{width:100%;background:#f7f0e2;border:1px solid var(--deep);border-radius:4px;
-        min-height:520px;padding:14px 16px;position:relative;overflow:hidden}
+        min-height:540px;padding:14px 16px;position:relative;overflow:hidden}
   .bubble{max-width:78%;padding:9px 12px;border-radius:3px;background:var(--paper2);
           border:1px solid var(--line);font-size:13px;line-height:1.75;color:var(--ink2);margin-bottom:10px}
   .bubble[data-me]{margin-left:auto;background:var(--sunken)}
   .bubble small{display:block;font:10px var(--mono);color:var(--muted);margin-bottom:3px}
 
-  /* ================= 悬浮球与面板（照 dist/index.js 的样式） ================= */
+  /* 悬浮球与面板：与 dist/index.js 一致 */
   #mz-jsz-host{position:fixed;inset:0;z-index:2147483000;pointer-events:none;
     font-family:var(--mz-jsz-font,-apple-system,"Noto Sans SC",sans-serif)}
   #mz-jsz-host *{box-sizing:border-box}
@@ -43,7 +40,7 @@
     border:1px solid var(--mz-jsz-line,#ba8e4a);cursor:grab;padding:0;touch-action:none;
     pointer-events:auto;display:flex;align-items:center;justify-content:center;
     background:var(--mz-jsz-ball,#8c5a2b);color:var(--mz-jsz-ball-ink,#f9f1df);
-    box-shadow:0 6px 18px -8px rgba(0,0,0,.55);transition:box-shadow .16s ease,background .16s ease;
+    box-shadow:0 6px 18px -8px rgba(0,0,0,.55);transition:box-shadow .16s ease;
     -webkit-tap-highlight-color:transparent;user-select:none}
   #mz-jsz-host .mz-jsz-ball:active{cursor:grabbing}
   #mz-jsz-host .mz-jsz-ball:focus-visible{outline:2px solid var(--mz-jsz-line,#ba8e4a);outline-offset:3px}
@@ -59,14 +56,23 @@
     #mz-jsz-host .mz-jsz-panel{width:calc(100vw - 12px);max-height:68vh}
   }
 
-  /* ================= 表单（照 dist/form.js 的样式） ================= */
-  .mz-f{display:flex;flex-direction:column;gap:10px;font-size:12px;color:var(--mz-jsz-ink,#352722)}
-  .mz-f-bar,.mz-f-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .mz-f-bar{padding-bottom:8px;border-bottom:1px dashed var(--mz-jsz-line,#c8c3b1)}
-  .mz-f-foot{padding-top:8px;border-top:1px dashed var(--mz-jsz-line,#c8c3b1)}
-  .mz-f-t{font-weight:600;letter-spacing:.04em;margin-right:auto;font-size:12.5px;color:#743e1d}
-  .mz-f label{font-size:11px;color:#756342}
-  .mz-f input[type=number]{width:70px}
+  /* 表单：与 dist/form.js 一致 */
+  .mz-f{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--mz-jsz-ink,#352722)}
+  .mz-f-t{font:600 12.5px/1.6 inherit;letter-spacing:.06em;color:#743e1d}
+  .mz-f-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    padding-bottom:7px;border-bottom:1px dashed var(--mz-jsz-line,#c8c3b1)}
+  .mz-f-bar label{font-size:11px;color:#756342}
+  .mz-f-bar input[type=number]{width:64px}
+  .mz-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:2px 0 6px;
+    border-bottom:1px solid var(--mz-jsz-line,#c8c3b1)}
+  .mz-tab{font:12px inherit;padding:4px 11px;border-radius:2px;cursor:pointer;
+    border:1px solid transparent;background:transparent;color:#796a5c}
+  .mz-tab:hover{color:#743e1d}
+  .mz-tab[aria-selected="true"]{border-color:var(--mz-jsz-line,#c8c3b1);
+    background:var(--mz-jsz-surface,#f9f1df);color:#5c250f;font-weight:600;
+    box-shadow:inset 0 -2px 0 #8c5a2b}
+  .mz-page{display:none;flex-direction:column;gap:2px}
+  .mz-page[data-on="1"]{display:flex}
   .mz-f input,.mz-f select,.mz-f textarea{
     font:12px/1.5 inherit;padding:4px 7px;border-radius:2px;
     border:1px solid var(--mz-jsz-line,#c8c3b1);
@@ -78,19 +84,37 @@
   .mz-f-btn[data-main]{background:#8c5a2b;border-color:#743e1d;color:#f9f1df;font-weight:600}
   .mz-f-btn[data-main]:hover{background:#743e1d;color:#fff}
   .mz-f-btn:disabled{opacity:.45;cursor:not-allowed}
+  .mz-f-btn[data-mini]{padding:2px 7px;font-size:11px}
+  .mz-f-btn[data-del]{border-color:#ca754a;color:#a33a2a;background:#fff4eb}
   .mz-g>h3{font:600 12px/1.6 inherit;letter-spacing:.08em;color:#743e1d;
-    margin:10px 0 6px;padding-bottom:3px;border-bottom:1px solid var(--mz-jsz-line,#c8c3b1)}
-  .mz-r{display:grid;grid-template-columns:88px 1fr;gap:6px 10px;align-items:center;margin:5px 0}
+    margin:9px 0 5px;padding-bottom:3px;border-bottom:1px solid var(--mz-jsz-line,#c8c3b1)}
+  .mz-r{display:grid;grid-template-columns:88px 1fr;gap:5px 10px;align-items:center;margin:5px 0}
   .mz-r>span{font-size:11.5px;color:#625349;line-height:1.4;word-break:break-all}
   .mz-r>div{display:flex;align-items:center;gap:6px;min-width:0}
   .mz-r input[type=text],.mz-r select{width:100%}
   .mz-r input[type=checkbox]{width:15px;height:15px;accent-color:#8c5a2b}
   .mz-hint{grid-column:2;font-size:10.5px;color:#8f8270;margin-top:-2px}
+  .mz-c2{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin:6px 0}
+  .mz-mini{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .mz-mini>label{font-size:11px;color:#625349}
+  .mz-mini input,.mz-mini select{width:100%}
+  .mz-map{display:flex;flex-direction:column;gap:7px;margin:6px 0}
+  .mz-item{border:1px solid var(--mz-jsz-line,#c8c3b1);border-left:2px solid #d8be79;
+    border-radius:2px;padding:7px 9px;background:rgba(255,251,235,.5)}
+  .mz-item-h{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+  .mz-item-h b{font:600 12px inherit;color:#5c250f}
+  .mz-item-h .mz-sp{margin-left:auto}
+  .mz-sub{display:grid;grid-template-columns:58px 1fr;gap:5px 8px;align-items:center;margin:3px 0}
+  .mz-sub>span{font-size:11px;color:#756342}
+  .mz-add{display:flex;gap:6px;margin-top:2px}
+  .mz-add input{flex:1;min-width:0}
+  .mz-empty{font-size:11.5px;color:#8f8270;padding:6px 0}
+  .mz-f-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    padding-top:8px;border-top:1px dashed var(--mz-jsz-line,#c8c3b1)}
   .mz-msg{margin-left:auto;font-size:11px;color:#4a6b3a}
-  .mz-msg[data-err]{color:#a33a2a}
-
   @media (max-width:400px){
     .mz-r{grid-template-columns:74px 1fr}
+    .mz-c2{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -100,8 +124,7 @@
   预览：
   <button data-w="pc" aria-pressed="true">PC 宽</button>
   <button data-w="phone" aria-pressed="false">手机宽 390</button>
-  <span>·</span>
-  <span>球可拖动，点开看点表单；改数会亮「保存修改 ●」</span>
+  <span>·</span><span>球可拖动 · 四个页签 · 属性两列 · 记录型字段可增删</span>
 </div>
 
 <div class="stage" data-w="pc">
@@ -113,77 +136,139 @@
 </div>
 
 <div id="mz-jsz-host" data-open="1">
-  <div class="mz-jsz-panel" role="dialog" aria-label="变量表单"></div>
-  <button class="mz-jsz-ball" type="button" aria-label="变量表单（可拖动）" aria-expanded="true">
+  <div class="mz-jsz-panel" role="dialog" aria-label="迷宫饭金手指"></div>
+  <button class="mz-jsz-ball" type="button" aria-label="迷宫饭金手指（可拖动）" aria-expanded="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M4 7h16M4 12h10M4 17h13"/>
-      <circle cx="18" cy="16.5" r="3.2"/>
+      <path d="M4 7h16M4 12h10M4 17h13"/><circle cx="18" cy="16.5" r="3.2"/>
     </svg>
   </button>
 </div>
 
 <script>
-/* ---------------- 配置（与 dist/fields/manfan.json 一致） ---------------- */
 const CONFIG = {
-  "卡": "迷宫饭 · 变量",
-  "分组": [
-    { "名": "时间与地点", "字段": [
-      { "路径": "世界.时刻.年", "标签": "年", "类型": "number", "min": 1, "max": 9999 },
-      { "路径": "世界.时刻.月", "标签": "月", "类型": "number", "min": 1, "max": 12 },
-      { "路径": "世界.时刻.日", "标签": "日", "类型": "number", "min": 1, "max": 31 },
-      { "路径": "世界.时刻.时间", "标签": "时刻", "类型": "text", "提示": "写成 09:00 这样" },
-      { "路径": "世界.位置.大区域", "标签": "大区域", "类型": "text", "提示": "岛 / 东方大陆 / 海洋…" },
-      { "路径": "世界.位置.小区域", "标签": "小区域", "类型": "text", "提示": "迷宫第 N 层 / 梅里尼村…" },
-      { "路径": "世界.位置.小地点", "标签": "小地点", "类型": "text", "提示": "新手广场 / 旧墓室回廊…" },
-      { "路径": "世界.深度", "标签": "深度", "类型": "number", "min": 0, "max": 8, "提示": "0 是地面；黄金之乡单独处理" },
-      { "路径": "世界.天气", "标签": "天气", "类型": "text", "提示": "地下也写，写的是体感" },
-      { "路径": "世界.营地", "标签": "营地", "类型": "text" }
+  "卡": "迷宫饭金手指",
+  "页": [
+    { "名": "概览", "分组": [
+      { "名": "时间与地点", "字段": [
+        { "路径": "世界.时刻.年", "标签": "年", "类型": "number", "min": 1, "max": 9999 },
+        { "路径": "世界.时刻.月", "标签": "月", "类型": "number", "min": 1, "max": 12 },
+        { "路径": "世界.时刻.日", "标签": "日", "类型": "number", "min": 1, "max": 31 },
+        { "路径": "世界.时刻.时间", "标签": "时刻", "类型": "text", "提示": "写成 09:00 这样" },
+        { "路径": "世界.位置.大区域", "标签": "大区域", "类型": "text", "提示": "岛 / 东方大陆 / 海洋…" },
+        { "路径": "世界.位置.小区域", "标签": "小区域", "类型": "text" },
+        { "路径": "世界.位置.小地点", "标签": "小地点", "类型": "text" },
+        { "路径": "世界.深度", "标签": "深度", "类型": "number", "min": 0, "max": 8, "提示": "0 是地面；黄金之乡单独处理" },
+        { "路径": "世界.天气", "标签": "天气", "类型": "text", "提示": "地下也写，写的是体感" },
+        { "路径": "世界.营地", "标签": "营地", "类型": "text" }
+      ]},
+      { "名": "玩家", "字段": [
+        { "路径": "玩家.身份.种族", "标签": "种族", "类型": "select", "选项": ["长身人","半身人","精灵","矮人","地精","半兽人","狗头人","食人魔","兽人","半精灵"] },
+        { "路径": "玩家.身份.年龄", "标签": "年龄", "类型": "number", "min": 1, "max": 500 },
+        { "路径": "玩家.身份.战斗职业", "标签": "战斗职业", "类型": "text" },
+        { "路径": "玩家.身份.生活职业", "标签": "生活职业", "类型": "text", "提示": "没有就留空" },
+        { "路径": "玩家.生命.当前HP", "标签": "当前 HP", "类型": "number", "min": 0, "max": 999 },
+        { "路径": "玩家.生命.最大HP", "标签": "最大 HP", "类型": "number", "min": 1, "max": 999, "提示": "20 + 体魄÷2" },
+        { "路径": "玩家.生命.当前MP", "标签": "当前 MP", "类型": "number", "min": 0, "max": 999 },
+        { "路径": "玩家.生命.最大MP", "标签": "最大 MP", "类型": "number", "min": 0, "max": 999, "提示": "学识÷2 + 意志÷4" },
+        { "路径": "玩家.金钱", "标签": "金钱", "类型": "number", "min": 0, "max": 999999 },
+        { "路径": "玩家.状态.体虚", "标签": "体虚", "类型": "bool", "提示": "连着两天没吃饱才会亮" }
+      ]},
+      { "名": "六属性", "列": 2, "字段": [
+        { "路径": "玩家.属性.体魄", "标签": "体魄", "类型": "number", "min": 5, "max": 95 },
+        { "路径": "玩家.属性.敏捷", "标签": "敏捷", "类型": "number", "min": 5, "max": 95 },
+        { "路径": "玩家.属性.学识", "标签": "学识", "类型": "number", "min": 5, "max": 95 },
+        { "路径": "玩家.属性.洞察", "标签": "洞察", "类型": "number", "min": 5, "max": 95 },
+        { "路径": "玩家.属性.意志", "标签": "意志", "类型": "number", "min": 5, "max": 95 },
+        { "路径": "玩家.属性.魅力", "标签": "魅力", "类型": "number", "min": 5, "max": 95 }
+      ]},
+      { "名": "状态与进程", "字段": [
+        { "路径": "饱食度", "标签": "饱食度", "类型": "number", "min": 0, "max": 100, "提示": "低于 35 会开始掉属性" },
+        { "路径": "士气", "标签": "士气", "类型": "number", "min": 0, "max": 100 },
+        { "路径": "世界.成长度", "标签": "迷宫成长度", "类型": "number", "min": 1, "max": 5 }
+      ]}
     ]},
-    { "名": "玩家", "字段": [
-      { "路径": "玩家.身份.种族", "标签": "种族", "类型": "select", "选项": ["长身人","半身人","精灵","矮人","地精","半兽人","狗头人","食人魔","兽人","半精灵"] },
-      { "路径": "玩家.身份.年龄", "标签": "年龄", "类型": "number", "min": 1, "max": 500 },
-      { "路径": "玩家.身份.战斗职业", "标签": "战斗职业", "类型": "text" },
-      { "路径": "玩家.身份.生活职业", "标签": "生活职业", "类型": "text", "提示": "没有就留空" },
-      { "路径": "玩家.生命.当前HP", "标签": "当前 HP", "类型": "number", "min": 0, "max": 999 },
-      { "路径": "玩家.生命.最大HP", "标签": "最大 HP", "类型": "number", "min": 1, "max": 999, "提示": "20 + 体魄÷2" },
-      { "路径": "玩家.生命.当前MP", "标签": "当前 MP", "类型": "number", "min": 0, "max": 999 },
-      { "路径": "玩家.生命.最大MP", "标签": "最大 MP", "类型": "number", "min": 0, "max": 999, "提示": "学识÷2 + 意志÷4" },
-      { "路径": "玩家.金钱", "标签": "金钱", "类型": "number", "min": 0, "max": 999999 },
-      { "路径": "玩家.状态.体虚", "标签": "体虚", "类型": "bool", "提示": "连着两天没吃饱才会亮" }
+    { "名": "人物", "分组": [
+      { "名": "在场的人", "字段": [
+        { "路径": "在场", "类型": "map", "可增": true, "可删": true,
+          "增提示": "输入名字，加一个在场的人", "空提示": "此刻身边没人。",
+          "子字段": [ { "键": "此刻状态", "类型": "text" }, { "键": "心声", "类型": "text" } ] }
+      ]},
+      { "名": "人物关系", "字段": [
+        { "路径": "人物", "类型": "map", "可增": true, "可删": false,
+          "增提示": "输入名字，加一条人物记录", "空提示": "还没有认识的人。",
+          "子字段": [ { "键": "好感", "类型": "number", "min": 0, "max": 100 },
+                      { "键": "关系", "类型": "text" }, { "键": "同行", "类型": "bool" } ] }
+      ]}
     ]},
-    { "名": "六属性", "字段": [
-      { "路径": "玩家.属性.体魄", "标签": "体魄", "类型": "number", "min": 5, "max": 95 },
-      { "路径": "玩家.属性.敏捷", "标签": "敏捷", "类型": "number", "min": 5, "max": 95 },
-      { "路径": "玩家.属性.学识", "标签": "学识", "类型": "number", "min": 5, "max": 95 },
-      { "路径": "玩家.属性.洞察", "标签": "洞察", "类型": "number", "min": 5, "max": 95 },
-      { "路径": "玩家.属性.意志", "标签": "意志", "类型": "number", "min": 5, "max": 95 },
-      { "路径": "玩家.属性.魅力", "标签": "魅力", "类型": "number", "min": 5, "max": 95 }
+    { "名": "背包", "分组": [
+      { "名": "携带", "字段": [
+        { "路径": "玩家.背包", "类型": "map", "可增": true, "可删": true,
+          "增提示": "输入物品名后添加", "空提示": "包里什么都没有。",
+          "子字段": [ { "键": "type", "类型": "text" },
+                      { "键": "qty", "类型": "number", "min": 0, "max": 999 },
+                      { "键": "品质", "类型": "select", "选项": ["", "劣质", "普通", "精良", "传说", "特殊"] },
+                      { "键": "说明", "类型": "text" } ] },
+        { "路径": "玩家.装备.武器", "标签": "武器", "类型": "text" },
+        { "路径": "玩家.装备.防具", "标签": "防具", "类型": "text" },
+        { "路径": "玩家.装备.饰品", "标签": "饰品", "类型": "text" }
+      ]}
     ]},
-    { "名": "状态与进程", "字段": [
-      { "路径": "饱食度", "标签": "饱食度", "类型": "number", "min": 0, "max": 100, "提示": "低于 35 会开始掉属性" },
-      { "路径": "士气", "标签": "士气", "类型": "number", "min": 0, "max": 100 },
-      { "路径": "世界.成长度", "标签": "迷宫成长度", "类型": "number", "min": 1, "max": 5, "提示": "按原著区间" }
+    { "名": "进度", "分组": [
+      { "名": "里程碑", "列": 2, "字段": [
+        { "路径": "世界.里程碑.M01", "标签": "M01", "类型": "bool" },
+        { "路径": "世界.里程碑.M02", "标签": "M02", "类型": "bool" },
+        { "路径": "世界.里程碑.M03", "标签": "M03", "类型": "bool" },
+        { "路径": "世界.里程碑.M04", "标签": "M04", "类型": "bool" },
+        { "路径": "世界.里程碑.M05", "标签": "M05", "类型": "bool" },
+        { "路径": "世界.里程碑.M06", "标签": "M06", "类型": "bool" },
+        { "路径": "世界.里程碑.M07", "标签": "M07", "类型": "bool" }
+      ]},
+      { "名": "剧情节点", "字段": [
+        { "路径": "世界.节点", "类型": "map", "可增": false, "可删": false,
+          "空提示": "还没有推进任何节点。",
+          "子字段": [ { "键": "状态", "类型": "bool" }, { "键": "路径", "类型": "text" } ] }
+      ]}
     ]}
   ]
 };
 
-/* ---------------- 假数据 ---------------- */
 const DATA = {
   世界: {
     时刻: { 年: 514, 月: 3, 日: 23, 时间: "09:00" },
     位置: { 大区域: "岛", 小区域: "迷宫第一层", 小地点: "新手广场" },
-    深度: 1,
-    天气: "地上一层阴冷，地面在下雨",
-    营地: "第一层·新手广场·旧营地",
-    成长度: 4
+    深度: 1, 天气: "地上一层阴冷，地面在下雨", 营地: "第一层·新手广场·旧营地", 成长度: 4,
+    里程碑: { M01: true, M02: true, M03: false, M04: false, M05: false, M06: false, M07: false },
+    节点: {
+      E01: { 状态: true, 路径: "开局前既定：莱欧斯与法琳都做过剥金人" },
+      E02: { 状态: true, 路径: "开局前既定：莱欧斯已组起一支讨伐队" },
+      E03: { 状态: false, 路径: "开局前既定：玛露希尔随队同行" }
+    }
   },
   玩家: {
     身份: { 种族: "半身人", 年龄: 24, 战斗职业: "陷阱师", 生活职业: "剥金人" },
     属性: { 体魄: 55, 敏捷: 60, 学识: 45, 洞察: 50, 意志: 45, 魅力: 45 },
     生命: { 当前HP: 48, 最大HP: 48, 当前MP: 34, 最大MP: 34 },
+    装备: { 武器: "短剑", 防具: "皮甲", 饰品: "" },
+    背包: {
+      短剑: { type: "装备", qty: 1, 品质: "普通" },
+      皮甲: { type: "装备", qty: 1, 品质: "普通" },
+      开锁工具: { type: "工具", qty: 1 },
+      火把: { type: "消耗品", qty: 3 },
+      干粮: { type: "食材", qty: 2 }
+    },
     状态: { 体虚: false },
     金钱: 50
+  },
+  人物: {
+    莱欧斯: { 好感: 25, 关系: "雇主，话比想得多", 同行: true },
+    玛露希尔: { 好感: 20, 关系: "同队，客气但留着距离", 同行: true },
+    奇尔查克: { 好感: 30, 关系: "同队，谈钱不伤感情", 同行: true },
+    森西: { 好感: 35, 关系: "同队，管你吃就管你到底", 同行: true }
+  },
+  在场: {
+    森西: { 此刻状态: "蹲在锅边撇沫", 心声: "水还没开" },
+    奇尔查克: { 此刻状态: "在数还剩几根火把", 心声: "四个人，三根火把，撑不到底" }
   },
   饱食度: 80,
   士气: 60
@@ -205,122 +290,222 @@ function setPath(o, p, v) {
   c[ks[ks.length - 1]] = v;
 }
 
-let draft = clone(DATA), dirty = false;
+let draft = clone(DATA), dirty = false, curPage = 0;
 
 panel.innerHTML = '';
 const root = document.createElement('div');
 root.className = 'mz-f';
-root.innerHTML = `
-  <div class="mz-f-bar">
-    <span class="mz-f-t">${CONFIG.卡}</span>
-    <label>楼层</label><input type="number" value="12" data-f="floor">
-    <button class="mz-f-btn" data-f="reload">重读</button>
-    <span class="mz-msg" data-f="msg"></span>
-  </div>
-  <div data-f="groups"></div>
-  <div class="mz-f-foot">
-    <button class="mz-f-btn" data-f="reset">还原</button>
-    <button class="mz-f-btn" data-main data-f="save" disabled>保存修改</button>
-  </div>`;
+root.innerHTML =
+  '<div class="mz-f-bar">' +
+    '<span class="mz-f-t">' + CONFIG.卡 + '</span>' +
+    '<label>楼层</label><input type="number" value="12" data-f="floor">' +
+    '<button class="mz-f-btn" data-mini data-f="reload">重读</button>' +
+    '<span class="mz-msg" data-f="msg"></span>' +
+  '</div>' +
+  '<div class="mz-tabs" role="tablist"></div>' +
+  '<div data-f="pages"></div>' +
+  '<div class="mz-f-foot">' +
+    '<button class="mz-f-btn" data-f="reset">还原</button>' +
+    '<button class="mz-f-btn" data-main data-f="save" disabled>保存修改</button>' +
+  '</div>';
 panel.appendChild(root);
 
-const groups = root.querySelector('[data-f="groups"]');
+const tabsEl = root.querySelector('.mz-tabs');
+const pagesEl = root.querySelector('[data-f="pages"]');
 const msgEl = root.querySelector('[data-f="msg"]');
 const saveBtn = root.querySelector('[data-f="save"]');
 
-function say(t, err) {
+function say(t) {
   msgEl.textContent = t || '';
-  if (err) msgEl.setAttribute('data-err', '1'); else msgEl.removeAttribute('data-err');
   if (t) setTimeout(() => { if (msgEl.textContent === t) msgEl.textContent = ''; }, 3000);
 }
 function markDirty() { dirty = true; saveBtn.disabled = false; saveBtn.textContent = '保存修改 ●'; }
-function clearDirty() { dirty = false; saveBtn.disabled = true; saveBtn.textContent = '保存修改'; }
+
+function control(f, value, onSet) {
+  let el;
+  if (f.类型 === 'select') {
+    el = document.createElement('select');
+    (f.选项 || []).forEach((o) => {
+      const op = document.createElement('option');
+      op.value = String(o); op.textContent = String(o); el.appendChild(op);
+    });
+    el.value = value == null ? '' : String(value);
+  } else if (f.类型 === 'bool') {
+    el = document.createElement('input'); el.type = 'checkbox'; el.checked = !!value;
+  } else if (f.类型 === 'number') {
+    el = document.createElement('input'); el.type = 'number';
+    if (f.min != null) el.min = f.min;
+    if (f.max != null) el.max = f.max;
+    el.value = value == null ? '' : value;
+  } else {
+    el = document.createElement('input'); el.type = 'text';
+    el.value = value == null ? '' : String(value);
+  }
+  el.addEventListener('change', () => {
+    let v;
+    if (f.类型 === 'bool') v = el.checked;
+    else if (f.类型 === 'number') {
+      let n = Number(el.value);
+      if (!isFinite(n)) n = f.min ?? 0;
+      if (f.min != null) n = Math.max(f.min, n);
+      if (f.max != null) n = Math.min(f.max, n);
+      el.value = n; v = n;
+    } else v = el.value;
+    onSet(v); markDirty();
+  });
+  return el;
+}
+
+function mapBlock(f) {
+  const wrap = document.createElement('div');
+  wrap.className = 'mz-map';
+  const obj = getPath(draft, f.路径);
+  const keys = obj && typeof obj === 'object' ? Object.keys(obj) : [];
+
+  if (!keys.length) {
+    const e = document.createElement('div');
+    e.className = 'mz-empty'; e.textContent = f.空提示 || '这里还是空的。';
+    wrap.appendChild(e);
+  }
+
+  keys.forEach((k) => {
+    const item = document.createElement('div');
+    item.className = 'mz-item';
+    const hd = document.createElement('div');
+    hd.className = 'mz-item-h';
+    const nm = document.createElement('b'); nm.textContent = k;
+    hd.appendChild(nm);
+    if (f.可删) {
+      const sp = document.createElement('span'); sp.className = 'mz-sp';
+      const del = document.createElement('button');
+      del.className = 'mz-f-btn'; del.setAttribute('data-mini', '');
+      del.setAttribute('data-del', ''); del.textContent = '移出';
+      del.addEventListener('click', () => {
+        const o = getPath(draft, f.路径);
+        if (o && o[k] !== undefined) { delete o[k]; markDirty(); build(); }
+      });
+      sp.appendChild(del); hd.appendChild(sp);
+    }
+    item.appendChild(hd);
+
+    (f.子字段 || []).forEach((sf) => {
+      const row = document.createElement('div');
+      row.className = 'mz-sub';
+      const lab = document.createElement('span'); lab.textContent = sf.键;
+      row.appendChild(lab);
+      const box = document.createElement('div');
+      const p = f.路径 + '.' + k + '.' + sf.键;
+      box.appendChild(control({ ...sf, 标签: sf.键 }, getPath(draft, p), (v) => setPath(draft, p, v)));
+      row.appendChild(box);
+      item.appendChild(row);
+    });
+    wrap.appendChild(item);
+  });
+
+  if (f.可增) {
+    const add = document.createElement('div');
+    add.className = 'mz-add';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.placeholder = f.增提示 || '输入名字后添加';
+    const btn = document.createElement('button');
+    btn.className = 'mz-f-btn'; btn.setAttribute('data-mini', ''); btn.textContent = '＋ 添加';
+    btn.addEventListener('click', () => {
+      const k = inp.value.trim(); if (!k) return;
+      if (!getPath(draft, f.路径)) setPath(draft, f.路径, {});
+      const o = getPath(draft, f.路径);
+      if (o[k] === undefined) {
+        const seed = {};
+        (f.子字段 || []).forEach((sf) => {
+          seed[sf.键] = sf.类型 === 'bool' ? false : (sf.类型 === 'number' ? (sf.min || 0) : '');
+        });
+        o[k] = seed; markDirty(); build();
+      }
+    });
+    add.appendChild(inp); add.appendChild(btn); wrap.appendChild(add);
+  }
+  return wrap;
+}
+
+function groupBlock(g) {
+  const sec = document.createElement('section');
+  sec.className = 'mz-g';
+  if (g.名) {
+    const h = document.createElement('h3'); h.textContent = g.名; sec.appendChild(h);
+  }
+  if (g.列 === 2) {
+    const grid = document.createElement('div');
+    grid.className = 'mz-c2';
+    (g.字段 || []).forEach((f) => {
+      const cell = document.createElement('div'); cell.className = 'mz-mini';
+      const lb = document.createElement('label'); lb.textContent = f.标签 || f.路径;
+      cell.appendChild(lb);
+      cell.appendChild(control(f, getPath(draft, f.路径), (v) => setPath(draft, f.路径, v)));
+      grid.appendChild(cell);
+    });
+    sec.appendChild(grid);
+    return sec;
+  }
+  (g.字段 || []).forEach((f) => {
+    if (f.类型 === 'map') { sec.appendChild(mapBlock(f)); return; }
+    const row = document.createElement('div'); row.className = 'mz-r';
+    const lab = document.createElement('span'); lab.textContent = f.标签 || f.路径;
+    row.appendChild(lab);
+    const box = document.createElement('div');
+    box.appendChild(control(f, getPath(draft, f.路径), (v) => setPath(draft, f.路径, v)));
+    row.appendChild(box);
+    if (f.提示) {
+      const hint = document.createElement('div'); hint.className = 'mz-hint';
+      hint.textContent = f.提示; row.appendChild(hint);
+    }
+    sec.appendChild(row);
+  });
+  return sec;
+}
 
 function build() {
-  groups.innerHTML = '';
-  CONFIG.分组.forEach((g) => {
-    const sec = document.createElement('section');
-    sec.className = 'mz-g';
-    const h = document.createElement('h3');
-    h.textContent = g.名;
-    sec.appendChild(h);
-
-    g.字段.forEach((f) => {
-      const row = document.createElement('div');
-      row.className = 'mz-r';
-      const lab = document.createElement('span');
-      lab.textContent = f.标签;
-      row.appendChild(lab);
-
-      const box = document.createElement('div');
-      const cur = getPath(draft, f.路径);
-      let el;
-      if (f.类型 === 'select') {
-        el = document.createElement('select');
-        f.选项.forEach((o) => {
-          const op = document.createElement('option');
-          op.value = o; op.textContent = o; el.appendChild(op);
-        });
-        el.value = cur == null ? '' : String(cur);
-      } else if (f.类型 === 'bool') {
-        el = document.createElement('input'); el.type = 'checkbox'; el.checked = !!cur;
-      } else if (f.类型 === 'number') {
-        el = document.createElement('input'); el.type = 'number';
-        if (f.min != null) el.min = f.min;
-        if (f.max != null) el.max = f.max;
-        el.value = cur == null ? '' : cur;
-      } else {
-        el = document.createElement('input'); el.type = 'text';
-        el.value = cur == null ? '' : String(cur);
-      }
-      el.setAttribute('aria-label', f.标签);
-      el.addEventListener('change', () => {
-        let v;
-        if (f.类型 === 'bool') v = el.checked;
-        else if (f.类型 === 'number') {
-          let n = Number(el.value);
-          if (!isFinite(n)) n = f.min ?? 0;
-          if (f.min != null) n = Math.max(f.min, n);
-          if (f.max != null) n = Math.min(f.max, n);
-          el.value = n; v = n;
-        } else v = el.value;
-        setPath(draft, f.路径, v);
-        markDirty();
-      });
-      box.appendChild(el);
-      row.appendChild(box);
-
-      if (f.提示) {
-        const hint = document.createElement('div');
-        hint.className = 'mz-hint';
-        hint.textContent = f.提示;
-        row.appendChild(hint);
-      }
-      sec.appendChild(row);
+  tabsEl.innerHTML = '';
+  pagesEl.innerHTML = '';
+  CONFIG.页.forEach((pg, i) => {
+    const b = document.createElement('button');
+    b.className = 'mz-tab';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', i === curPage ? 'true' : 'false');
+    b.textContent = pg.名;
+    b.addEventListener('click', () => {
+      curPage = i;
+      tabsEl.querySelectorAll('.mz-tab').forEach((x, j) =>
+        x.setAttribute('aria-selected', j === i ? 'true' : 'false'));
+      pagesEl.querySelectorAll('.mz-page').forEach((x, j) =>
+        x.setAttribute('data-on', j === i ? '1' : '0'));
     });
-    groups.appendChild(sec);
+    tabsEl.appendChild(b);
+
+    const box = document.createElement('div');
+    box.className = 'mz-page';
+    box.setAttribute('data-on', i === curPage ? '1' : '0');
+    (pg.分组 || []).forEach((g) => box.appendChild(groupBlock(g)));
+    pagesEl.appendChild(box);
   });
 }
 
 function reload() {
   draft = clone(DATA);
   build();
-  clearDirty();
+  dirty = false; saveBtn.disabled = true; saveBtn.textContent = '保存修改';
   say('已读取楼层 #12');
 }
 
 saveBtn.addEventListener('click', () => {
   if (!dirty) return;
-  clearDirty();
+  dirty = false; saveBtn.disabled = true; saveBtn.textContent = '保存修改';
   say('已保存到楼层 #12');
 });
-
 root.querySelector('[data-f="reset"]').addEventListener('click', reload);
-root.querySelector('[data-f="reload"]').addEventListener('click', () => { reload(); });
+root.querySelector('[data-f="reload"]').addEventListener('click', reload);
 
 reload();
 
-/* ---------------- 球与面板（照 index.js 的拖拽逻辑） ---------------- */
+/* ---------------- 球与面板 ---------------- */
 const BALL = 44;
 const clamp = (x, y) => ({
   x: Math.max(6, Math.min(x, innerWidth - BALL - 6)),
@@ -328,8 +513,7 @@ const clamp = (x, y) => ({
 });
 function place(x, y) {
   const p = clamp(x, y);
-  ball.style.left = p.x + 'px';
-  ball.style.top = p.y + 'px';
+  ball.style.left = p.x + 'px'; ball.style.top = p.y + 'px';
   return p;
 }
 function setOpen(open) {
@@ -339,15 +523,13 @@ function setOpen(open) {
 }
 function placePanel() {
   const r = ball.getBoundingClientRect();
-  const pw = panel.offsetWidth || 320, ph = panel.offsetHeight || 300;
+  const pw = panel.offsetWidth || 320, ph = panel.offsetHeight || 320;
   let left = Math.max(8, Math.min(r.right - pw, innerWidth - pw - 8));
   let top = r.top - ph - 10;
   if (top < 8) top = r.bottom + 10;
   if (top + ph > innerHeight - 8) top = Math.max(8, innerHeight - ph - 8);
-  panel.style.left = left + 'px';
-  panel.style.top = top + 'px';
+  panel.style.left = left + 'px'; panel.style.top = top + 'px';
 }
-
 place(innerWidth - BALL - 16, innerHeight - BALL - 16);
 
 let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
@@ -355,11 +537,9 @@ ball.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;
   dragging = true; moved = false;
   sx = e.clientX; sy = e.clientY;
-  ox = parseFloat(ball.style.left) || 0;
-  oy = parseFloat(ball.style.top) || 0;
+  ox = parseFloat(ball.style.left) || 0; oy = parseFloat(ball.style.top) || 0;
   try { ball.setPointerCapture(e.pointerId); } catch (err) {}
-  host.dataset.drag = '1';
-  e.preventDefault();
+  host.dataset.drag = '1'; e.preventDefault();
 });
 ball.addEventListener('pointermove', (e) => {
   if (!dragging) return;
@@ -371,23 +551,17 @@ ball.addEventListener('pointermove', (e) => {
 });
 function endDrag(e) {
   if (!dragging) return;
-  dragging = false;
-  host.dataset.drag = '0';
+  dragging = false; host.dataset.drag = '0';
   try { ball.releasePointerCapture(e.pointerId); } catch (err) {}
   if (moved) {
     const p = { x: parseFloat(ball.style.left) || 0, y: parseFloat(ball.style.top) || 0 };
     const nearRight = p.x + BALL / 2 > innerWidth / 2;
     place(nearRight ? innerWidth - BALL - 12 : 12, p.y);
     if (host.dataset.open === '1') placePanel();
-  } else {
-    setOpen(host.dataset.open !== '1');
-  }
+  } else setOpen(host.dataset.open !== '1');
 }
 ball.addEventListener('pointerup', endDrag);
 ball.addEventListener('pointercancel', endDrag);
-ball.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(host.dataset.open !== '1'); }
-});
 addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 addEventListener('resize', () => {
   place(parseFloat(ball.style.left) || 0, parseFloat(ball.style.top) || 0);

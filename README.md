@@ -14,10 +14,10 @@
 
 ```js
 // 表单模式：卡里给一份字段配置，面板变成表单
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.4.0/dist/index.js?theme=manfan&fields=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.5.0/dist/index.js?theme=manfan&fields=manfan'
 
 // 树模式：什么都不给，退回原版变量树
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.4.0/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.5.0/dist/index.js?theme=manfan'
 ```
 
 两个参数都可省：
@@ -75,7 +75,7 @@ import dist/index.js
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.4.0 · theme=manfan · fields=manfan
+[金手指] v0.5.0 · theme=manfan · fields=manfan
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
@@ -107,12 +107,21 @@ import dist/index.js
 }
 ```
 
-- 控件四种：`text` / `number` / `select` / `bool`
+- 控件五种：`text` / `number` / `select` / `bool` / `map`（记录型，可增删条目）
+- 分页：配置用 `页` 而不是 `分组`，每个页一个 tab
+- 两列：分组加 `"列": 2`，紧凑排列（六属性、里程碑用这个）
 - 只动配置里点名的路径，其它字段一律不碰
 - 保存前会重新读一次楼层，避免用旧快照覆盖
 - 面板顶部可换楼层号，改历史楼的变量也行
 
-现成的配置：`dist/fields/manfan.json`（迷宫饭 30 个字段）。
+现成的配置：`dist/fields/manfan.json` —— 四页 **44 个字段**
+
+| 页 | 内容 |
+|---|---|
+| 概览 | 时间地点 10、玩家 10、六属性 6（两列）、状态进程 3 |
+| 人物 | 在场（可增删）、人物关系（好感/关系/同行） |
+| 背包 | 物品（数量/品质/说明，可增删）、武器防具饰品 |
+| 进度 | 里程碑 M01–M07、剧情节点、账本 |
 
 ## 悬浮球
 

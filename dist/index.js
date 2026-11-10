@@ -266,7 +266,7 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.4.0 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
+  console.log('[金手指] v0.5.0 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
 
   loadTheme(theme);
   const shell = buildShell();
