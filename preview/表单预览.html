@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>金手指 · 表单模式 静态预览</title>
+<style>
+  :root{
+    --paper:#f3e8d2; --paper2:#f9f1df; --sunken:#e8d9bd; --deep:#dcc9a5;
+    --line:#c8c3b1; --line2:#ba8e4a; --ink:#352722; --ink2:#625349; --ink3:#756342; --muted:#8f8270;
+    --jade:#4a6b3a;
+    --mz-jsz-surface:#f9f1df; --mz-jsz-ink:#352722; --mz-jsz-line:#c8c3b1;
+    --mz-jsz-ball:#8c5a2b; --mz-jsz-ball-ink:#f9f1df;
+    --mz-jsz-font:-apple-system,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:#e6dcc8;color:var(--ink);font-family:var(--mz-jsz-font);
+       display:flex;flex-direction:column;align-items:center;padding:22px 16px 90px}
+
+  /* ---- 顶部说明（真机没有） ---- */
+  .demo{width:100%;max-width:980px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+        margin-bottom:14px;font:11px var(--mono);color:#7a6a54}
+  .demo button{font:11px var(--mz-jsz-font);padding:4px 10px;border:1px solid var(--line);
+        border-radius:2px;background:var(--paper);color:#5c4a38;cursor:pointer}
+  .demo button[aria-pressed="true"]{background:#8c5a2b;border-color:#743e1d;color:#f9f1df}
+
+  /* ---- 假聊天区 ---- */
+  .stage{width:100%;max-width:980px;display:flex;justify-content:center}
+  .stage[data-w="phone"]{max-width:390px}
+  .chat{width:100%;background:#f7f0e2;border:1px solid var(--deep);border-radius:4px;
+        min-height:520px;padding:14px 16px;position:relative;overflow:hidden}
+  .bubble{max-width:78%;padding:9px 12px;border-radius:3px;background:var(--paper2);
+          border:1px solid var(--line);font-size:13px;line-height:1.75;color:var(--ink2);margin-bottom:10px}
+  .bubble[data-me]{margin-left:auto;background:var(--sunken)}
+  .bubble small{display:block;font:10px var(--mono);color:var(--muted);margin-bottom:3px}
+
+  /* ================= 悬浮球与面板（照 dist/index.js 的样式） ================= */
+  #mz-jsz-host{position:fixed;inset:0;z-index:2147483000;pointer-events:none;
+    font-family:var(--mz-jsz-font,-apple-system,"Noto Sans SC",sans-serif)}
+  #mz-jsz-host *{box-sizing:border-box}
+  #mz-jsz-host .mz-jsz-ball{position:absolute;width:44px;height:44px;border-radius:50%;
+    border:1px solid var(--mz-jsz-line,#ba8e4a);cursor:grab;padding:0;touch-action:none;
+    pointer-events:auto;display:flex;align-items:center;justify-content:center;
+    background:var(--mz-jsz-ball,#8c5a2b);color:var(--mz-jsz-ball-ink,#f9f1df);
+    box-shadow:0 6px 18px -8px rgba(0,0,0,.55);transition:box-shadow .16s ease,background .16s ease;
+    -webkit-tap-highlight-color:transparent;user-select:none}
+  #mz-jsz-host .mz-jsz-ball:active{cursor:grabbing}
+  #mz-jsz-host .mz-jsz-ball:focus-visible{outline:2px solid var(--mz-jsz-line,#ba8e4a);outline-offset:3px}
+  #mz-jsz-host .mz-jsz-ball svg{width:20px;height:20px;display:block;pointer-events:none}
+  #mz-jsz-host[data-drag="1"] .mz-jsz-ball{box-shadow:0 10px 26px -8px rgba(0,0,0,.6)}
+  #mz-jsz-host .mz-jsz-panel{position:absolute;pointer-events:auto;display:none;
+    width:min(420px,calc(100vw - 16px));max-height:min(70vh,640px);overflow:auto;overscroll-behavior:contain;
+    background:var(--mz-jsz-surface,#f9f1df);color:var(--mz-jsz-ink,#352722);
+    border:1px solid var(--mz-jsz-line,#c8c3b1);border-radius:4px;padding:10px 12px;
+    box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
+  #mz-jsz-host[data-open="1"] .mz-jsz-panel{display:block}
+  @media (max-width:480px){
+    #mz-jsz-host .mz-jsz-panel{width:calc(100vw - 12px);max-height:68vh}
+  }
+
+  /* ================= 表单（照 dist/form.js 的样式） ================= */
+  .mz-f{display:flex;flex-direction:column;gap:10px;font-size:12px;color:var(--mz-jsz-ink,#352722)}
+  .mz-f-bar,.mz-f-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .mz-f-bar{padding-bottom:8px;border-bottom:1px dashed var(--mz-jsz-line,#c8c3b1)}
+  .mz-f-foot{padding-top:8px;border-top:1px dashed var(--mz-jsz-line,#c8c3b1)}
+  .mz-f-t{font-weight:600;letter-spacing:.04em;margin-right:auto;font-size:12.5px;color:#743e1d}
+  .mz-f label{font-size:11px;color:#756342}
+  .mz-f input[type=number]{width:70px}
+  .mz-f input,.mz-f select,.mz-f textarea{
+    font:12px/1.5 inherit;padding:4px 7px;border-radius:2px;
+    border:1px solid var(--mz-jsz-line,#c8c3b1);
+    background:var(--mz-jsz-surface,#f9f1df);color:var(--mz-jsz-ink,#352722)}
+  .mz-f input:focus,.mz-f select:focus,.mz-f textarea:focus{outline:2px solid #d8be79;outline-offset:1px}
+  .mz-f-btn{font:12px inherit;padding:5px 12px;border-radius:2px;cursor:pointer;
+    border:1px solid var(--mz-jsz-line,#c8c3b1);background:transparent;color:var(--mz-jsz-ink,#352722)}
+  .mz-f-btn:hover{border-color:#ba8e4a;color:#743e1d}
+  .mz-f-btn[data-main]{background:#8c5a2b;border-color:#743e1d;color:#f9f1df;font-weight:600}
+  .mz-f-btn[data-main]:hover{background:#743e1d;color:#fff}
+  .mz-f-btn:disabled{opacity:.45;cursor:not-allowed}
+  .mz-g>h3{font:600 12px/1.6 inherit;letter-spacing:.08em;color:#743e1d;
+    margin:10px 0 6px;padding-bottom:3px;border-bottom:1px solid var(--mz-jsz-line,#c8c3b1)}
+  .mz-r{display:grid;grid-template-columns:88px 1fr;gap:6px 10px;align-items:center;margin:5px 0}
+  .mz-r>span{font-size:11.5px;color:#625349;line-height:1.4;word-break:break-all}
+  .mz-r>div{display:flex;align-items:center;gap:6px;min-width:0}
+  .mz-r input[type=text],.mz-r select{width:100%}
+  .mz-r input[type=checkbox]{width:15px;height:15px;accent-color:#8c5a2b}
+  .mz-hint{grid-column:2;font-size:10.5px;color:#8f8270;margin-top:-2px}
+  .mz-msg{margin-left:auto;font-size:11px;color:#4a6b3a}
+  .mz-msg[data-err]{color:#a33a2a}
+
+  @media (max-width:400px){
+    .mz-r{grid-template-columns:74px 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo">
+  预览：
+  <button data-w="pc" aria-pressed="true">PC 宽</button>
+  <button data-w="phone" aria-pressed="false">手机宽 390</button>
+  <span>·</span>
+  <span>球可拖动，点开看点表单；改数会亮「保存修改 ●」</span>
+</div>
+
+<div class="stage" data-w="pc">
+  <div class="chat">
+    <div class="bubble"><small>森西</small>这锅汤，我研究了七十六年。</div>
+    <div class="bubble" data-me><small>你</small>……先把火看着。</div>
+    <div class="bubble"><small>奇尔查克</small>别聊了，登记处还等着报人数。</div>
+  </div>
+</div>
+
+<div id="mz-jsz-host" data-open="1">
+  <div class="mz-jsz-panel" role="dialog" aria-label="变量表单"></div>
+  <button class="mz-jsz-ball" type="button" aria-label="变量表单（可拖动）" aria-expanded="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h10M4 17h13"/>
+      <circle cx="18" cy="16.5" r="3.2"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+/* ---------------- 配置（与 dist/fields/manfan.json 一致） ---------------- */
+const CONFIG = {
+  "卡": "迷宫饭 · 变量",
+  "分组": [
+    { "名": "时间与地点", "字段": [
+      { "路径": "世界.时刻.年", "标签": "年", "类型": "number", "min": 1, "max": 9999 },
+      { "路径": "世界.时刻.月", "标签": "月", "类型": "number", "min": 1, "max": 12 },
+      { "路径": "世界.时刻.日", "标签": "日", "类型": "number", "min": 1, "max": 31 },
+      { "路径": "世界.时刻.时间", "标签": "时刻", "类型": "text", "提示": "写成 09:00 这样" },
+      { "路径": "世界.位置.大区域", "标签": "大区域", "类型": "text", "提示": "岛 / 东方大陆 / 海洋…" },
+      { "路径": "世界.位置.小区域", "标签": "小区域", "类型": "text", "提示": "迷宫第 N 层 / 梅里尼村…" },
+      { "路径": "世界.位置.小地点", "标签": "小地点", "类型": "text", "提示": "新手广场 / 旧墓室回廊…" },
+      { "路径": "世界.深度", "标签": "深度", "类型": "number", "min": 0, "max": 8, "提示": "0 是地面；黄金之乡单独处理" },
+      { "路径": "世界.天气", "标签": "天气", "类型": "text", "提示": "地下也写，写的是体感" },
+      { "路径": "世界.营地", "标签": "营地", "类型": "text" }
+    ]},
+    { "名": "玩家", "字段": [
+      { "路径": "玩家.身份.种族", "标签": "种族", "类型": "select", "选项": ["长身人","半身人","精灵","矮人","地精","半兽人","狗头人","食人魔","兽人","半精灵"] },
+      { "路径": "玩家.身份.年龄", "标签": "年龄", "类型": "number", "min": 1, "max": 500 },
+      { "路径": "玩家.身份.战斗职业", "标签": "战斗职业", "类型": "text" },
+      { "路径": "玩家.身份.生活职业", "标签": "生活职业", "类型": "text", "提示": "没有就留空" },
+      { "路径": "玩家.生命.当前HP", "标签": "当前 HP", "类型": "number", "min": 0, "max": 999 },
+      { "路径": "玩家.生命.最大HP", "标签": "最大 HP", "类型": "number", "min": 1, "max": 999, "提示": "20 + 体魄÷2" },
+      { "路径": "玩家.生命.当前MP", "标签": "当前 MP", "类型": "number", "min": 0, "max": 999 },
+      { "路径": "玩家.生命.最大MP", "标签": "最大 MP", "类型": "number", "min": 0, "max": 999, "提示": "学识÷2 + 意志÷4" },
+      { "路径": "玩家.金钱", "标签": "金钱", "类型": "number", "min": 0, "max": 999999 },
+      { "路径": "玩家.状态.体虚", "标签": "体虚", "类型": "bool", "提示": "连着两天没吃饱才会亮" }
+    ]},
+    { "名": "六属性", "字段": [
+      { "路径": "玩家.属性.体魄", "标签": "体魄", "类型": "number", "min": 5, "max": 95 },
+      { "路径": "玩家.属性.敏捷", "标签": "敏捷", "类型": "number", "min": 5, "max": 95 },
+      { "路径": "玩家.属性.学识", "标签": "学识", "类型": "number", "min": 5, "max": 95 },
+      { "路径": "玩家.属性.洞察", "标签": "洞察", "类型": "number", "min": 5, "max": 95 },
+      { "路径": "玩家.属性.意志", "标签": "意志", "类型": "number", "min": 5, "max": 95 },
+      { "路径": "玩家.属性.魅力", "标签": "魅力", "类型": "number", "min": 5, "max": 95 }
+    ]},
+    { "名": "状态与进程", "字段": [
+      { "路径": "饱食度", "标签": "饱食度", "类型": "number", "min": 0, "max": 100, "提示": "低于 35 会开始掉属性" },
+      { "路径": "士气", "标签": "士气", "类型": "number", "min": 0, "max": 100 },
+      { "路径": "世界.成长度", "标签": "迷宫成长度", "类型": "number", "min": 1, "max": 5, "提示": "按原著区间" }
+    ]}
+  ]
+};
+
+/* ---------------- 假数据 ---------------- */
+const DATA = {
+  世界: {
+    时刻: { 年: 514, 月: 3, 日: 23, 时间: "09:00" },
+    位置: { 大区域: "岛", 小区域: "迷宫第一层", 小地点: "新手广场" },
+    深度: 1,
+    天气: "地上一层阴冷，地面在下雨",
+    营地: "第一层·新手广场·旧营地",
+    成长度: 4
+  },
+  玩家: {
+    身份: { 种族: "半身人", 年龄: 24, 战斗职业: "陷阱师", 生活职业: "剥金人" },
+    属性: { 体魄: 55, 敏捷: 60, 学识: 45, 洞察: 50, 意志: 45, 魅力: 45 },
+    生命: { 当前HP: 48, 最大HP: 48, 当前MP: 34, 最大MP: 34 },
+    状态: { 体虚: false },
+    金钱: 50
+  },
+  饱食度: 80,
+  士气: 60
+};
+
+/* ---------------- 渲染 ---------------- */
+const host = document.getElementById('mz-jsz-host');
+const panel = host.querySelector('.mz-jsz-panel');
+const ball = host.querySelector('.mz-jsz-ball');
+
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
+function setPath(o, p, v) {
+  const ks = p.split('.'); let c = o;
+  for (let i = 0; i < ks.length - 1; i++) {
+    if (c[ks[i]] == null || typeof c[ks[i]] !== 'object') c[ks[i]] = {};
+    c = c[ks[i]];
+  }
+  c[ks[ks.length - 1]] = v;
+}
+
+let draft = clone(DATA), dirty = false;
+
+panel.innerHTML = '';
+const root = document.createElement('div');
+root.className = 'mz-f';
+root.innerHTML = `
+  <div class="mz-f-bar">
+    <span class="mz-f-t">${CONFIG.卡}</span>
+    <label>楼层</label><input type="number" value="12" data-f="floor">
+    <button class="mz-f-btn" data-f="reload">重读</button>
+    <span class="mz-msg" data-f="msg"></span>
+  </div>
+  <div data-f="groups"></div>
+  <div class="mz-f-foot">
+    <button class="mz-f-btn" data-f="reset">还原</button>
+    <button class="mz-f-btn" data-main data-f="save" disabled>保存修改</button>
+  </div>`;
+panel.appendChild(root);
+
+const groups = root.querySelector('[data-f="groups"]');
+const msgEl = root.querySelector('[data-f="msg"]');
+const saveBtn = root.querySelector('[data-f="save"]');
+
+function say(t, err) {
+  msgEl.textContent = t || '';
+  if (err) msgEl.setAttribute('data-err', '1'); else msgEl.removeAttribute('data-err');
+  if (t) setTimeout(() => { if (msgEl.textContent === t) msgEl.textContent = ''; }, 3000);
+}
+function markDirty() { dirty = true; saveBtn.disabled = false; saveBtn.textContent = '保存修改 ●'; }
+function clearDirty() { dirty = false; saveBtn.disabled = true; saveBtn.textContent = '保存修改'; }
+
+function build() {
+  groups.innerHTML = '';
+  CONFIG.分组.forEach((g) => {
+    const sec = document.createElement('section');
+    sec.className = 'mz-g';
+    const h = document.createElement('h3');
+    h.textContent = g.名;
+    sec.appendChild(h);
+
+    g.字段.forEach((f) => {
+      const row = document.createElement('div');
+      row.className = 'mz-r';
+      const lab = document.createElement('span');
+      lab.textContent = f.标签;
+      row.appendChild(lab);
+
+      const box = document.createElement('div');
+      const cur = getPath(draft, f.路径);
+      let el;
+      if (f.类型 === 'select') {
+        el = document.createElement('select');
+        f.选项.forEach((o) => {
+          const op = document.createElement('option');
+          op.value = o; op.textContent = o; el.appendChild(op);
+        });
+        el.value = cur == null ? '' : String(cur);
+      } else if (f.类型 === 'bool') {
+        el = document.createElement('input'); el.type = 'checkbox'; el.checked = !!cur;
+      } else if (f.类型 === 'number') {
+        el = document.createElement('input'); el.type = 'number';
+        if (f.min != null) el.min = f.min;
+        if (f.max != null) el.max = f.max;
+        el.value = cur == null ? '' : cur;
+      } else {
+        el = document.createElement('input'); el.type = 'text';
+        el.value = cur == null ? '' : String(cur);
+      }
+      el.setAttribute('aria-label', f.标签);
+      el.addEventListener('change', () => {
+        let v;
+        if (f.类型 === 'bool') v = el.checked;
+        else if (f.类型 === 'number') {
+          let n = Number(el.value);
+          if (!isFinite(n)) n = f.min ?? 0;
+          if (f.min != null) n = Math.max(f.min, n);
+          if (f.max != null) n = Math.min(f.max, n);
+          el.value = n; v = n;
+        } else v = el.value;
+        setPath(draft, f.路径, v);
+        markDirty();
+      });
+      box.appendChild(el);
+      row.appendChild(box);
+
+      if (f.提示) {
+        const hint = document.createElement('div');
+        hint.className = 'mz-hint';
+        hint.textContent = f.提示;
+        row.appendChild(hint);
+      }
+      sec.appendChild(row);
+    });
+    groups.appendChild(sec);
+  });
+}
+
+function reload() {
+  draft = clone(DATA);
+  build();
+  clearDirty();
+  say('已读取楼层 #12');
+}
+
+saveBtn.addEventListener('click', () => {
+  if (!dirty) return;
+  clearDirty();
+  say('已保存到楼层 #12');
+});
+
+root.querySelector('[data-f="reset"]').addEventListener('click', reload);
+root.querySelector('[data-f="reload"]').addEventListener('click', () => { reload(); });
+
+reload();
+
+/* ---------------- 球与面板（照 index.js 的拖拽逻辑） ---------------- */
+const BALL = 44;
+const clamp = (x, y) => ({
+  x: Math.max(6, Math.min(x, innerWidth - BALL - 6)),
+  y: Math.max(6, Math.min(y, innerHeight - BALL - 6)),
+});
+function place(x, y) {
+  const p = clamp(x, y);
+  ball.style.left = p.x + 'px';
+  ball.style.top = p.y + 'px';
+  return p;
+}
+function setOpen(open) {
+  host.dataset.open = open ? '1' : '0';
+  ball.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (open) placePanel();
+}
+function placePanel() {
+  const r = ball.getBoundingClientRect();
+  const pw = panel.offsetWidth || 320, ph = panel.offsetHeight || 300;
+  let left = Math.max(8, Math.min(r.right - pw, innerWidth - pw - 8));
+  let top = r.top - ph - 10;
+  if (top < 8) top = r.bottom + 10;
+  if (top + ph > innerHeight - 8) top = Math.max(8, innerHeight - ph - 8);
+  panel.style.left = left + 'px';
+  panel.style.top = top + 'px';
+}
+
+place(innerWidth - BALL - 16, innerHeight - BALL - 16);
+
+let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+ball.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0) return;
+  dragging = true; moved = false;
+  sx = e.clientX; sy = e.clientY;
+  ox = parseFloat(ball.style.left) || 0;
+  oy = parseFloat(ball.style.top) || 0;
+  try { ball.setPointerCapture(e.pointerId); } catch (err) {}
+  host.dataset.drag = '1';
+  e.preventDefault();
+});
+ball.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - sx, dy = e.clientY - sy;
+  if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+  if (!moved) return;
+  place(ox + dx, oy + dy);
+  if (host.dataset.open === '1') placePanel();
+});
+function endDrag(e) {
+  if (!dragging) return;
+  dragging = false;
+  host.dataset.drag = '0';
+  try { ball.releasePointerCapture(e.pointerId); } catch (err) {}
+  if (moved) {
+    const p = { x: parseFloat(ball.style.left) || 0, y: parseFloat(ball.style.top) || 0 };
+    const nearRight = p.x + BALL / 2 > innerWidth / 2;
+    place(nearRight ? innerWidth - BALL - 12 : 12, p.y);
+    if (host.dataset.open === '1') placePanel();
+  } else {
+    setOpen(host.dataset.open !== '1');
+  }
+}
+ball.addEventListener('pointerup', endDrag);
+ball.addEventListener('pointercancel', endDrag);
+ball.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(host.dataset.open !== '1'); }
+});
+addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+addEventListener('resize', () => {
+  place(parseFloat(ball.style.left) || 0, parseFloat(ball.style.top) || 0);
+  if (host.dataset.open === '1') placePanel();
+});
+
+/* ---------------- 宽度切换 ---------------- */
+const stage = document.querySelector('.stage');
+document.querySelectorAll('.demo button').forEach((b) => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.demo button').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+    b.setAttribute('aria-pressed', 'true');
+    stage.dataset.w = b.dataset.w;
+  });
+});
+</script>
+</body>
+</html>
