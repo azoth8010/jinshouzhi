@@ -14,10 +14,10 @@
 
 ```js
 // 表单模式：卡里给一份字段配置，面板变成表单
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.6.8/dist/index.js?theme=manfan&fields=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.0/dist/index.js?theme=manfan&fields=manfan'
 
 // 树模式：什么都不给，退回原版变量树
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.6.8/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.0/dist/index.js?theme=manfan'
 ```
 
 两个参数都可省：
@@ -75,7 +75,7 @@ import dist/index.js
 jsdelivr 有三个入口，中国大陆走 `testingcf` 最快，但它会出现「同一版本里 A 文件能取、B 文件 404」的脏缓存。稳妥的写法是逐个降级：
 
 ```js
-const V = 'v0.6.8';
+const V = 'v0.7.0';
 const P = `azoth8010/jinshouzhi@${V}/dist/index.js?theme=manfan&fields=manfan`;
 const HOSTS = [
   'https://testingcf.jsdelivr.net/gh/',
@@ -97,7 +97,7 @@ const HOSTS = [
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.6.8 · theme=manfan · fields=manfan
+[金手指] v0.7.0 · theme=manfan · fields=manfan
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。

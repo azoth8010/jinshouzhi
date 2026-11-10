@@ -269,7 +269,8 @@ export function mountForm(ctx) {
       const hd = hostDoc.createElement('div');
       hd.className = 'mz-item-h';
       const nm = hostDoc.createElement('b');
-      nm.textContent = k;
+      const 名表 = f.键名表 || {};
+      nm.textContent = 名表[k] ? (k + ' ' + 名表[k]) : k;
       hd.appendChild(nm);
 
       if (f.可删) {
