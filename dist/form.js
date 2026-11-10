@@ -388,9 +388,24 @@ export function mountForm(ctx) {
     say('已读取楼层 #' + msgId);
   }
 
+  /* ---------- 保存前的清理 ---------- */
+  function applyCleanup() {
+    pages.forEach((pg) => (pg.分组 || []).forEach((g) => (g.字段 || []).forEach((f) => {
+      if (f.类型 !== 'map' || !f.清空) return;
+      const o = getPath(draft, f.路径);
+      if (!o || typeof o !== 'object') return;
+      const key = f.清空.键, lim = Number(f.清空.小于等于);
+      Object.keys(o).forEach((k) => {
+        const v = Number(getPath(o, k + '.' + key));
+        if (isFinite(v) && v <= lim) delete o[k];
+      });
+    })));
+  }
+
   /* ---------- 保存 ---------- */
   saveBtn.addEventListener('click', async () => {
     if (!dirty || !draft) return;
+    applyCleanup();
     const now = readData(msgId);
     if (!now.ok) { say('这个楼层已经没有变量了', true); return; }
     const updated = clone(now.all);

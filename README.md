@@ -14,10 +14,10 @@
 
 ```js
 // 表单模式：卡里给一份字段配置，面板变成表单
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.5.0/dist/index.js?theme=manfan&fields=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.6.0/dist/index.js?theme=manfan&fields=manfan'
 
 // 树模式：什么都不给，退回原版变量树
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.5.0/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.6.0/dist/index.js?theme=manfan'
 ```
 
 两个参数都可省：
@@ -75,7 +75,7 @@ import dist/index.js
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.5.0 · theme=manfan · fields=manfan
+[金手指] v0.6.0 · theme=manfan · fields=manfan
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
@@ -119,9 +119,12 @@ import dist/index.js
 | 页 | 内容 |
 |---|---|
 | 概览 | 时间地点 10、玩家 10、六属性 6（两列）、状态进程 3 |
-| 人物 | 在场（可增删）、人物关系（好感/关系/同行） |
-| 背包 | 物品（数量/品质/说明，可增删）、武器防具饰品 |
+| 人物 | 在场（可增删）、人物关系（身份/好感/关系/欲念/同行） |
+| 背包 | 物品（类型/数量/品质/说明，可增删）、武器防具饰品 |
+| 委托 | 委托人 / 目标 / 报酬 / 期限 / 状态（可增删） |
 | 进度 | 里程碑 M01–M07、剧情节点、账本 |
+
+**数量归零自动清条**：背包字段写了 `"清空": {"键":"qty","小于等于":0}`，保存时把数量为 0 的条目删掉，不留空壳。
 
 ## 悬浮球
 
