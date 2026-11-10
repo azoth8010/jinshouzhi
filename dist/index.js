@@ -28,14 +28,6 @@ const theme = (params.get('theme') || 'manfan').replace(/[^\w-]/g, '');
 const fieldsParam = (params.get('fields') || '').trim();
 const base = new URL('./', here);
 
-/* ---------- 单例 ---------- */
-if (window.__mzJinshouzhi) {
-  console.info('[金手指] 已经跑过了，跳过。');
-} else {
-  window.__mzJinshouzhi = { theme, at: Date.now() };
-  boot();
-}
-
 /* ---------- 主题 ---------- */
 function loadTheme(name) {
   const head = HOST_DOC.head || HOST_DOC.documentElement;
@@ -266,7 +258,7 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.6.0 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
+  console.log('[金手指] v0.6.1 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
 
   loadTheme(theme);
   const shell = buildShell();
@@ -333,4 +325,15 @@ function paintTheme(scope) {
   }
   const roots = scope.querySelectorAll ? scope.querySelectorAll('.th-variable-manager') : [];
   roots.forEach((el) => el.setAttribute('data-mz-theme', theme));
+}
+
+/* ---------- 启动 ----------
+   必须放在文件末尾：boot() 里会用到下面的 const（BALL / POS_KEY 等），
+   提前调用会撞上暂时性死区（Cannot access 'BALL' before initialization）。
+   再包一层 microtask，将来加 const 也不会再踩。 */
+if (window.__mzJinshouzhi) {
+  console.info('[金手指] 已经跑过了，跳过。');
+} else {
+  window.__mzJinshouzhi = { theme, at: Date.now() };
+  queueMicrotask(boot);
 }
