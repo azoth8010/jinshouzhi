@@ -98,6 +98,11 @@
   .mz-mini{display:flex;flex-direction:column;gap:3px;min-width:0}
   .mz-mini>label{font-size:11px;color:#625349}
   .mz-mini input,.mz-mini select{width:100%}
+  .mz-mini input[type=checkbox]{width:14px;height:14px;flex:0 0 auto}
+  .mz-ck{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;line-height:1.5;
+    color:#625349;cursor:pointer;padding:2px 0}
+  .mz-ck input{width:14px;height:14px;margin:1px 0 0;flex:0 0 auto;accent-color:#8c5a2b}
+  .mz-ck span{min-width:0;word-break:break-word}
   .mz-map{display:flex;flex-direction:column;gap:7px;margin:6px 0}
   .mz-item{border:1px solid var(--mz-jsz-line,#c8c3b1);border-left:2px solid #d8be79;
     border-radius:2px;padding:7px 9px;background:rgba(255,251,235,.5)}
@@ -231,13 +236,13 @@ const CONFIG = {
     ]},
     { "名": "进度", "分组": [
       { "名": "里程碑", "列": 2, "字段": [
-        { "路径": "世界.里程碑.M01", "标签": "M01", "类型": "bool" },
-        { "路径": "世界.里程碑.M02", "标签": "M02", "类型": "bool" },
-        { "路径": "世界.里程碑.M03", "标签": "M03", "类型": "bool" },
-        { "路径": "世界.里程碑.M04", "标签": "M04", "类型": "bool" },
-        { "路径": "世界.里程碑.M05", "标签": "M05", "类型": "bool" },
-        { "路径": "世界.里程碑.M06", "标签": "M06", "类型": "bool" },
-        { "路径": "世界.里程碑.M07", "标签": "M07", "类型": "bool" }
+        { "路径": "世界.里程碑.M01", "标签": "M01 首次独自解决一次遭遇", "类型": "bool" },
+        { "路径": "世界.里程碑.M02", "标签": "M02 首次做出绝品料理", "类型": "bool" },
+        { "路径": "世界.里程碑.M03", "标签": "M03 首次带全队活着回来", "类型": "bool" },
+        { "路径": "世界.里程碑.M04", "标签": "M04 首次识别魔物并记录", "类型": "bool" },
+        { "路径": "世界.里程碑.M05", "标签": "M05 首次复活他人", "类型": "bool" },
+        { "路径": "世界.里程碑.M06", "标签": "M06 死过一次并复活", "类型": "bool" },
+        { "路径": "世界.里程碑.M07", "标签": "M07 成为黄金之国国王", "类型": "bool" }
       ]},
       { "名": "剧情节点", "字段": [
         { "路径": "世界.节点", "类型": "map", "可增": false, "可删": false,
@@ -456,9 +461,16 @@ function groupBlock(g) {
     grid.className = 'mz-c2';
     (g.字段 || []).forEach((f) => {
       const cell = document.createElement('div'); cell.className = 'mz-mini';
-      const lb = document.createElement('label'); lb.textContent = f.标签 || f.路径;
-      cell.appendChild(lb);
-      cell.appendChild(control(f, getPath(draft, f.路径), (v) => setPath(draft, f.路径, v)));
+      if (f.类型 === 'bool') {
+        const ck = document.createElement('label'); ck.className = 'mz-ck';
+        ck.appendChild(control(f, getPath(draft, f.路径), (v) => setPath(draft, f.路径, v)));
+        const tx = document.createElement('span'); tx.textContent = f.标签 || f.路径;
+        ck.appendChild(tx); cell.appendChild(ck);
+      } else {
+        const lb = document.createElement('label'); lb.textContent = f.标签 || f.路径;
+        cell.appendChild(lb);
+        cell.appendChild(control(f, getPath(draft, f.路径), (v) => setPath(draft, f.路径, v)));
+      }
       grid.appendChild(cell);
     });
     sec.appendChild(grid);
@@ -579,9 +591,7 @@ function endDrag(e) {
   dragging = false; host.dataset.drag = '0';
   try { ball.releasePointerCapture(e.pointerId); } catch (err) {}
   if (moved) {
-    const p = { x: parseFloat(ball.style.left) || 0, y: parseFloat(ball.style.top) || 0 };
-    const nearRight = p.x + BALL / 2 > innerWidth / 2;
-    place(nearRight ? innerWidth - BALL - 12 : 12, p.y);
+    place(parseFloat(ball.style.left) || 0, parseFloat(ball.style.top) || 0);
     if (host.dataset.open === '1') placePanel();
   } else setOpen(host.dataset.open !== '1');
 }

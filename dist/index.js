@@ -213,12 +213,9 @@ function buildShell() {
     host.dataset.drag = '0';
     try { ball.releasePointerCapture(e.pointerId); } catch (err) {}
     if (moved) {
-      const p = { x: parseFloat(ball.style.left) || 0, y: parseFloat(ball.style.top) || 0 };
+      // 不吸附：松手停在哪儿就是哪儿，只做视口内夹取
+      const p = place(parseFloat(ball.style.left) || 0, parseFloat(ball.style.top) || 0);
       try { localStorage.setItem(POS_KEY, JSON.stringify(p)); } catch (err) {}
-      // 拖完贴边：过中线就靠右
-      const nearRight = p.x + BALL / 2 > vw() / 2;
-      const snapped = place(nearRight ? vw() - BALL - 12 : 12, p.y);
-      try { localStorage.setItem(POS_KEY, JSON.stringify(snapped)); } catch (err) {}
       if (host.dataset.open === '1') placePanel();
     } else {
       setOpen(host.dataset.open !== '1');
@@ -258,7 +255,7 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.6.1 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
+  console.log('[金手指] v0.6.2 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
 
   loadTheme(theme);
   const shell = buildShell();

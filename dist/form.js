@@ -57,6 +57,11 @@ export function mountForm(ctx) {
       .mz-mini{display:flex;flex-direction:column;gap:3px;min-width:0}
       .mz-mini>label{font-size:11px;color:#625349}
       .mz-mini input,.mz-mini select{width:100%}
+      .mz-mini input[type=checkbox]{width:14px;height:14px;flex:0 0 auto}
+      .mz-ck{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;line-height:1.5;
+        color:#625349;cursor:pointer;padding:2px 0}
+      .mz-ck input{width:14px;height:14px;margin:1px 0 0;flex:0 0 auto;accent-color:#8c5a2b}
+      .mz-ck span{min-width:0;word-break:break-word}
 
       .mz-map{display:flex;flex-direction:column;gap:7px;margin:6px 0}
       .mz-item{border:1px solid var(--mz-jsz-line,#c8c3b1);border-left:2px solid #d8be79;
@@ -309,11 +314,23 @@ export function mountForm(ctx) {
       (g.字段 || []).forEach((f) => {
         const cell = hostDoc.createElement('div');
         cell.className = 'mz-mini';
-        const lb = hostDoc.createElement('label');
-        lb.textContent = f.标签 || f.路径;
-        cell.appendChild(lb);
-        cell.appendChild(control(f, getPath(draft, f.路径),
-          (v) => setPath(draft, f.路径, v)));
+        if (f.类型 === 'bool') {
+          // 勾选框 + 全名一行，避免 100% 宽的假输入框
+          const ck = hostDoc.createElement('label');
+          ck.className = 'mz-ck';
+          ck.appendChild(control(f, getPath(draft, f.路径),
+            (v) => setPath(draft, f.路径, v)));
+          const tx = hostDoc.createElement('span');
+          tx.textContent = f.标签 || f.路径;
+          ck.appendChild(tx);
+          cell.appendChild(ck);
+        } else {
+          const lb = hostDoc.createElement('label');
+          lb.textContent = f.标签 || f.路径;
+          cell.appendChild(lb);
+          cell.appendChild(control(f, getPath(draft, f.路径),
+            (v) => setPath(draft, f.路径, v)));
+        }
         grid.appendChild(cell);
       });
       sec.appendChild(grid);
