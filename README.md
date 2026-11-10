@@ -13,7 +13,7 @@
 角色卡的 Tavern Helper 脚本里只写一行：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.2.0/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.3.0/dist/index.js?theme=manfan'
 ```
 
 换主题改 `theme=` 即可。不写就是 `manfan`。
@@ -66,7 +66,7 @@ import dist/index.js
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.2.0 · theme=manfan
+[金手指] v0.3.0 · theme=manfan
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
@@ -75,6 +75,15 @@ import dist/index.js
 - **有这行，但球没出来** → 多半是 DOM 挂在了 iframe 里。v0.1.1 已改用 `window.parent.document`，如果仍然没有，说明父窗口访问被拦，控制台会有报错。
 - **球出来了，点开是空的** → 看面板里的提示：要么核心加载失败（网络），要么没找到挂载点。
 - **没找到挂载点** → 先手动打开一次「扩展设置」面板，让原版完成挂载，再刷新页面。
+
+## 悬浮球
+
+- **可拖动**：按住球拖到任意位置，松手自动贴边（过中线就靠右）
+- **位置记忆**：存在 `localStorage`，刷新和换楼层都不跑
+- **面板跟随**：优先开在球上方，上方不够就开在下方；左右不会越界
+- **双端**：`pointer` 事件统一鼠标与触摸；球上 `touch-action:none`，拖动不会带着页面滚
+- **无障碍**：球是 `<button>`，Enter / 空格开合，Esc 关闭，焦点有描边
+- **窄屏**：宽度 <480px 时面板自动铺到 `calc(100vw - 12px)`
 
 ## 已知限制
 

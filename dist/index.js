@@ -89,38 +89,47 @@ function waitForCore() {
 }
 
 /* ---------- 外壳 ---------- */
+const BALL = 44;
+const POS_KEY = 'mz-jsz-pos';
+
 function buildShell() {
-  if (HOST_DOC.getElementById(HOST_ID)) return HOST_DOC.getElementById(HOST_ID);
+  const exist = HOST_DOC.getElementById(HOST_ID);
+  if (exist) {
+    return { host: exist, panel: exist.querySelector('.mz-jsz-panel') };
+  }
 
   const host = HOST_DOC.createElement('div');
   host.id = HOST_ID;
   host.innerHTML = `
     <style>
-      #${HOST_ID}{position:fixed;z-index:2147483000;right:calc(16px + env(safe-area-inset-right));
-        bottom:calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;
-        align-items:flex-end;gap:10px;pointer-events:none;
+      #${HOST_ID}{position:fixed;inset:0;z-index:2147483000;pointer-events:none;
         font-family:var(--mz-jsz-font,-apple-system,"Noto Sans SC",sans-serif)}
       #${HOST_ID} *{box-sizing:border-box}
-      #${HOST_ID} .mz-jsz-ball{pointer-events:auto;width:44px;height:44px;border-radius:50%;
-        border:1px solid var(--mz-jsz-line,#ba8e4a);cursor:pointer;padding:0;
+      #${HOST_ID} .mz-jsz-ball{position:absolute;width:${BALL}px;height:${BALL}px;border-radius:50%;
+        border:1px solid var(--mz-jsz-line,#ba8e4a);cursor:grab;padding:0;touch-action:none;
+        pointer-events:auto;display:flex;align-items:center;justify-content:center;
         background:var(--mz-jsz-ball,#8c5a2b);color:var(--mz-jsz-ball-ink,#f9f1df);
-        display:flex;align-items:center;justify-content:center;
-        box-shadow:0 6px 18px -8px rgba(0,0,0,.55);transition:transform .16s ease,background .16s ease}
-      #${HOST_ID} .mz-jsz-ball:hover{transform:translateY(-1px)}
+        box-shadow:0 6px 18px -8px rgba(0,0,0,.55);transition:box-shadow .16s ease,background .16s ease;
+        -webkit-tap-highlight-color:transparent;user-select:none}
+      #${HOST_ID} .mz-jsz-ball:active{cursor:grabbing}
       #${HOST_ID} .mz-jsz-ball:focus-visible{outline:2px solid var(--mz-jsz-line,#ba8e4a);outline-offset:3px}
-      #${HOST_ID} .mz-jsz-ball svg{width:20px;height:20px;display:block}
-      #${HOST_ID} .mz-jsz-panel{pointer-events:auto;display:none;width:min(420px,calc(100vw - 32px));
-        max-height:min(70vh,640px);overflow:auto;overscroll-behavior:contain;
+      #${HOST_ID} .mz-jsz-ball svg{width:20px;height:20px;display:block;pointer-events:none}
+      #${HOST_ID}[data-drag="1"] .mz-jsz-ball{box-shadow:0 10px 26px -8px rgba(0,0,0,.6)}
+      #${HOST_ID} .mz-jsz-panel{position:absolute;pointer-events:auto;display:none;
+        width:min(420px,calc(100vw - 16px));max-height:min(70vh,640px);overflow:auto;overscroll-behavior:contain;
         background:var(--mz-jsz-surface,#f9f1df);color:var(--mz-jsz-ink,#352722);
-        border:1px solid var(--mz-jsz-line,#c8c3b1);border-radius:4px;
-        padding:10px 12px;box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
+        border:1px solid var(--mz-jsz-line,#c8c3b1);border-radius:4px;padding:10px 12px;
+        box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
       #${HOST_ID}[data-open="1"] .mz-jsz-panel{display:block}
       @media (max-width:480px){
-        #${HOST_ID} .mz-jsz-panel{width:calc(100vw - 24px);max-height:72vh}
+        #${HOST_ID} .mz-jsz-panel{width:calc(100vw - 12px);max-height:68vh}
+      }
+      @media (prefers-reduced-motion:reduce){
+        #${HOST_ID} .mz-jsz-ball{transition:none}
       }
     </style>
     <div class="mz-jsz-panel" role="dialog" aria-label="变量管理器"></div>
-    <button class="mz-jsz-ball" type="button" aria-label="打开变量管理器" aria-expanded="false">
+    <button class="mz-jsz-ball" type="button" aria-label="变量管理器（可拖动）" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 7h16M4 12h10M4 17h13"/>
@@ -133,19 +142,120 @@ function buildShell() {
   const ball = host.querySelector('.mz-jsz-ball');
   const panel = host.querySelector('.mz-jsz-panel');
 
-  const setOpen = (open) => {
+  const vw = () => HOST_DOC.documentElement.clientWidth || window.innerWidth;
+  const vh = () => HOST_DOC.documentElement.clientHeight || window.innerHeight;
+
+  function clamp(x, y) {
+    const w = vw(), h = vh();
+    return {
+      x: Math.max(6, Math.min(x, w - BALL - 6)),
+      y: Math.max(6, Math.min(y, h - BALL - 6)),
+    };
+  }
+
+  function place(x, y) {
+    const p = clamp(x, y);
+    ball.style.left = p.x + 'px';
+    ball.style.top = p.y + 'px';
+    return p;
+  }
+
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null'); } catch (e) {}
+  const init = saved && typeof saved.x === 'number'
+    ? saved
+    : { x: vw() - BALL - 16, y: vh() - BALL - 16 };
+  place(init.x, init.y);
+
+  /* ---- 开合 ---- */
+  function setOpen(open) {
     host.dataset.open = open ? '1' : '0';
     ball.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) placePanel();
     try { localStorage.setItem(STORE_KEY, open ? '1' : '0'); } catch (e) {}
-  };
+  }
 
-  ball.addEventListener('click', () => setOpen(host.dataset.open !== '1'));
+  function placePanel() {
+    const r = ball.getBoundingClientRect();
+    const pw = panel.offsetWidth || 320;
+    const ph = panel.offsetHeight || 300;
+    const w = vw(), h = vh();
+    let left = r.right - pw;
+    left = Math.max(8, Math.min(left, w - pw - 8));
+    let top = r.top - ph - 10;
+    if (top < 8) top = r.bottom + 10;
+    if (top + ph > h - 8) top = Math.max(8, h - ph - 8);
+    panel.style.left = left + 'px';
+    panel.style.top = top + 'px';
+  }
+
+  /* ---- 拖动 ---- */
+  let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+
+  ball.addEventListener('pointerdown', (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    dragging = true; moved = false;
+    sx = e.clientX; sy = e.clientY;
+    ox = parseFloat(ball.style.left) || 0;
+    oy = parseFloat(ball.style.top) || 0;
+    try { ball.setPointerCapture(e.pointerId); } catch (err) {}
+    host.dataset.drag = '1';
+    e.preventDefault();
+  });
+
+  ball.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+    if (!moved) return;
+    place(ox + dx, oy + dy);
+    if (host.dataset.open === '1') placePanel();
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    host.dataset.drag = '0';
+    try { ball.releasePointerCapture(e.pointerId); } catch (err) {}
+    if (moved) {
+      const p = { x: parseFloat(ball.style.left) || 0, y: parseFloat(ball.style.top) || 0 };
+      try { localStorage.setItem(POS_KEY, JSON.stringify(p)); } catch (err) {}
+      // 拖完贴边：过中线就靠右
+      const nearRight = p.x + BALL / 2 > vw() / 2;
+      const snapped = place(nearRight ? vw() - BALL - 12 : 12, p.y);
+      try { localStorage.setItem(POS_KEY, JSON.stringify(snapped)); } catch (err) {}
+      if (host.dataset.open === '1') placePanel();
+    } else {
+      setOpen(host.dataset.open !== '1');
+    }
+  }
+  ball.addEventListener('pointerup', endDrag);
+  ball.addEventListener('pointercancel', endDrag);
+
+  ball.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(host.dataset.open !== '1');
+    }
+  });
+
   HOST_DOC.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && host.dataset.open === '1') setOpen(false);
   });
 
-  let remembered = '1';
-  try { remembered = localStorage.getItem(STORE_KEY) || '1'; } catch (e) {}
+  let rt = null;
+  (HOST_DOC.defaultView || window).addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      const p = place(parseFloat(ball.style.left) || 0, parseFloat(ball.style.top) || 0);
+      try { localStorage.setItem(POS_KEY, JSON.stringify(p)); } catch (e) {}
+      if (host.dataset.open === '1') placePanel();
+    }, 120);
+  });
+
+  const remembered = (function () {
+    try { return localStorage.getItem(STORE_KEY) || '1'; } catch (e) { return '1'; }
+  })();
   setOpen(remembered === '1');
 
   return { host, panel };
@@ -153,7 +263,7 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
-  console.log('[金手指] v0.2.0 · theme=' + theme);
+  console.log('[金手指] v0.3.0 · theme=' + theme);
 
   loadTheme(theme);
 
