@@ -13,7 +13,7 @@
 角色卡的 Tavern Helper 脚本里只写一行：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.1.1/dist/index.js?theme=manfan'
 ```
 
 换主题改 `theme=` 即可。不写就是 `manfan`。
@@ -21,7 +21,7 @@ import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?them
 **建议锁版本**，避免 jsdelivr 缓存：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@1.0.0/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?theme=manfan'
 ```
 
 ## 主题
