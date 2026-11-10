@@ -180,13 +180,27 @@ export function mountForm(ctx) {
   function control(f, value, onSet) {
     let el;
     if (f.类型 === 'select') {
+      // 选项可以是字符串，也可以是 {标签, 值}——值允许是 true / "changed" 这类非字符串
+      const opts = (f.选项 || []).map((o) => (o && typeof o === 'object')
+        ? { 标签: String(o.标签), 值: o.值 }
+        : { 标签: String(o), 值: o });
       el = hostDoc.createElement('select');
-      (f.选项 || []).forEach((o) => {
+      opts.forEach((o, i) => {
         const op = hostDoc.createElement('option');
-        op.value = String(o); op.textContent = String(o);
+        op.value = String(i); op.textContent = o.标签;
         el.appendChild(op);
       });
-      el.value = value == null ? '' : String(value);
+      const same = (a, b) => (typeof a === 'boolean' || typeof b === 'boolean')
+        ? a === b
+        : String(a) === String(b);
+      let idx = opts.findIndex((o) => same(o.值, value));
+      if (idx < 0) idx = 0;
+      el.selectedIndex = idx;
+      el.addEventListener('change', () => {
+        onSet(opts[el.selectedIndex].值);
+        markDirty();
+      });
+      return el;
     } else if (f.类型 === 'bool') {
       el = hostDoc.createElement('input');
       el.type = 'checkbox';
@@ -298,7 +312,12 @@ export function mountForm(ctx) {
         if (o[k] === undefined) {
           const seed = {};
           (f.子字段 || []).forEach((sf) => {
-            seed[sf.键] = sf.类型 === 'bool' ? false : (sf.类型 === 'number' ? (sf.min || 0) : '');
+            if (sf.类型 === 'bool') seed[sf.键] = false;
+            else if (sf.类型 === 'number') seed[sf.键] = sf.min || 0;
+            else if (sf.类型 === 'select') {
+              const first = (sf.选项 || [])[0];
+              seed[sf.键] = (first && typeof first === 'object') ? first.值 : (first == null ? '' : first);
+            } else seed[sf.键] = '';
           });
           o[k] = seed;
           markDirty(); build();

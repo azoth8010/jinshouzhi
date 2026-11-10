@@ -256,7 +256,12 @@ const CONFIG = {
       { "名": "剧情节点", "字段": [
         { "路径": "世界.节点", "类型": "map", "可增": false, "可删": false,
           "空提示": "还没有推进任何节点。",
-          "子字段": [ { "键": "状态", "类型": "bool" }, { "键": "路径", "类型": "text" } ] }
+          "子字段": [
+            { "键": "状态", "类型": "select", "选项": [
+              { "标签": "未触及", "值": "未触及" },
+              { "标签": "已发生", "值": true },
+              { "标签": "已改写", "值": "changed" } ] },
+            { "键": "路径", "类型": "text" } ] }
       ]}
     ]}
   ]
@@ -270,8 +275,8 @@ const DATA = {
     里程碑: { M01: true, M02: true, M03: false, M04: false, M05: false, M06: false, M07: false },
     节点: {
       E01: { 状态: true, 路径: "开局前既定：莱欧斯与法琳都做过剥金人" },
-      E02: { 状态: true, 路径: "开局前既定：莱欧斯已组起一支讨伐队" },
-      E03: { 状态: false, 路径: "开局前既定：玛露希尔随队同行" }
+      E02: { 状态: "changed", 路径: "本来只是组队，玩家先一步把报酬谈高了" },
+      E03: { 状态: "未触及", 路径: "" }
     }
   },
   玩家: {
@@ -357,12 +362,20 @@ function markDirty() { dirty = true; saveBtn.disabled = false; saveBtn.textConte
 function control(f, value, onSet) {
   let el;
   if (f.类型 === 'select') {
+    const opts = (f.选项 || []).map((o) => (o && typeof o === 'object')
+      ? { 标签: String(o.标签), 值: o.值 } : { 标签: String(o), 值: o });
     el = document.createElement('select');
-    (f.选项 || []).forEach((o) => {
+    opts.forEach((o, i) => {
       const op = document.createElement('option');
-      op.value = String(o); op.textContent = String(o); el.appendChild(op);
+      op.value = String(i); op.textContent = o.标签; el.appendChild(op);
     });
-    el.value = value == null ? '' : String(value);
+    const same = (a, b) => (typeof a === 'boolean' || typeof b === 'boolean')
+      ? a === b : String(a) === String(b);
+    let idx = opts.findIndex((o) => same(o.值, value));
+    if (idx < 0) idx = 0;
+    el.selectedIndex = idx;
+    el.addEventListener('change', () => { onSet(opts[el.selectedIndex].值); markDirty(); });
+    return el;
   } else if (f.类型 === 'bool') {
     el = document.createElement('input'); el.type = 'checkbox'; el.className = 'mz-cb';
     el.checked = value === true || value === 1 || value === 'true' || value === '1';
