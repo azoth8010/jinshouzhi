@@ -228,7 +228,10 @@ export function mountForm(ctx) {
         if (f.min != null) n = Math.max(f.min, n);
         if (f.max != null) n = Math.min(f.max, n);
         el.value = n; v = n;
-      } else v = el.value;
+      } else {
+        v = el.value;
+        if (f.空为null && String(v).trim() === '') v = null;
+      }
       onSet(v);
       markDirty();
     });
