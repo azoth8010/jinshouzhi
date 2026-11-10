@@ -16,6 +16,11 @@ const HOST_ID = 'mz-jsz-host';
 const MOUNT_WAIT_MS = 8000;
 const STORE_KEY = 'mz-jsz-open';
 
+/* 酒馆助手脚本跑在 iframe 里：document 是脚本自己的，界面在父窗口 */
+const HOST_DOC = (function () {
+  try { return window.parent.document; } catch (e) { return document; }
+})();
+
 const here = import.meta.url;
 const theme = (new URL(here).searchParams.get('theme') || 'manfan').replace(/[^\w-]/g, '');
 const base = new URL('./', here);
@@ -30,22 +35,23 @@ if (window.__mzJinshouzhi) {
 
 /* ---------- 主题 ---------- */
 function loadTheme(name) {
+  const head = HOST_DOC.head || HOST_DOC.documentElement;
   ['_base', name].forEach((n) => {
     if (!n) return;
     const id = 'mz-jsz-css-' + n;
-    if (document.getElementById(id)) return;
-    const link = document.createElement('link');
+    if (HOST_DOC.getElementById(id)) return;
+    const link = HOST_DOC.createElement('link');
     link.id = id;
     link.rel = 'stylesheet';
     link.href = new URL(`themes/${n}.css`, base).href;
     link.onerror = () => console.warn('[金手指] 主题加载失败：', n);
-    document.head.appendChild(link);
+    head.appendChild(link);
   });
 }
 
 /* ---------- 找原版挂载出来的节点 ---------- */
 function findCoreNode() {
-  const box = document.getElementById('extensions_settings2');
+  const box = HOST_DOC.getElementById('extensions_settings2');
   if (!box) return null;
   // 原版会 append 一个带 script_id 的 div；取最后一个没被搬走的就是它
   const nodes = box.querySelectorAll(':scope > div[script_id]');
@@ -73,9 +79,9 @@ function waitForCore() {
 
 /* ---------- 外壳 ---------- */
 function buildShell() {
-  if (document.getElementById(HOST_ID)) return document.getElementById(HOST_ID);
+  if (HOST_DOC.getElementById(HOST_ID)) return HOST_DOC.getElementById(HOST_ID);
 
-  const host = document.createElement('div');
+  const host = HOST_DOC.createElement('div');
   host.id = HOST_ID;
   host.innerHTML = `
     <style>
@@ -111,7 +117,7 @@ function buildShell() {
       </svg>
     </button>
   `;
-  document.body.appendChild(host);
+  (HOST_DOC.body || HOST_DOC.documentElement).appendChild(host);
 
   const ball = host.querySelector('.mz-jsz-ball');
   const panel = host.querySelector('.mz-jsz-panel');
@@ -123,7 +129,7 @@ function buildShell() {
   };
 
   ball.addEventListener('click', () => setOpen(host.dataset.open !== '1'));
-  document.addEventListener('keydown', (e) => {
+  HOST_DOC.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && host.dataset.open === '1') setOpen(false);
   });
 
@@ -136,36 +142,49 @@ function buildShell() {
 
 /* ---------- 主流程 ---------- */
 async function boot() {
+  console.log('[金手指] v0.1.1 · theme=' + theme);
+
   loadTheme(theme);
+
+  // 先把球挂出来：核心挂了也能看见东西，不至于白等
+  const shell = buildShell();
+  const note = (html) => {
+    shell.panel.innerHTML =
+      '<div style="padding:14px 8px;font-size:12px;line-height:1.9;color:#625349">' + html + '</div>';
+  };
+  note('正在加载变量管理器…');
 
   try {
     await import(CORE_URL);
   } catch (e) {
     console.error('[金手指] 原版核心加载失败', e);
+    note('变量管理器加载失败。<br>多半是网络拿不到 jsdelivr，或原版改了路径。<br>'
+      + '<span style="opacity:.7">' + String(e && e.message || e) + '</span>');
     return;
   }
 
   const node = await waitForCore();
-  const shell = buildShell();
 
   if (!node) {
-    // 降级：搬不动就留在扩展面板，只套主题
     console.warn('[金手指] 没找到原版挂载节点，降级为「只套主题」。');
-    paintTheme(document);
+    note('原版加载了，但没找到它的挂载点。<br>它挂在「扩展设置」面板里，可能是面板还没打开过。<br>'
+      + '打开一次「扩展」，再刷新页面。');
+    paintTheme(HOST_DOC);
     return;
   }
 
   node.dataset.mzMoved = '1';
+  shell.panel.innerHTML = '';
   shell.panel.appendChild(node);
   paintTheme(node);
+  console.log('[金手指] 已搬进浮层');
 }
 
 function paintTheme(scope) {
-  const roots = scope.querySelectorAll
-    ? scope.querySelectorAll('.th-variable-manager')
-    : [];
+  if (!scope) return;
   if (scope.classList && scope.classList.contains('th-variable-manager')) {
     scope.setAttribute('data-mz-theme', theme);
   }
+  const roots = scope.querySelectorAll ? scope.querySelectorAll('.th-variable-manager') : [];
   roots.forEach((el) => el.setAttribute('data-mz-theme', theme));
 }
