@@ -1,0 +1,115 @@
+@import url('./_base.css');
+
+/* 中性示例主题
+   没有题材倾向，用来验证功能或作为改主题的起点。改主题只动这一段。 */
+
+:root {
+  --mz-jsz-surface: #f7f7f5;
+  --mz-jsz-ink: #2b2b2b;
+  --mz-jsz-line: #c9c9c4;
+  --mz-jsz-ball: #4a4a4a;
+  --mz-jsz-ball-ink: #f7f7f5;
+  --mz-jsz-font: -apple-system, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.th-variable-manager[data-mz-theme="example"] {
+  --SmartThemeBorderColor: #d5d5cf;
+  --SmartThemeBodyColor: #2b2b2b;
+  --SmartThemeEmColor: #4a4a4a;
+  --SmartThemeQuoteColor: #6b6b66;
+  --SmartThemeBlurTintColor: #efefec;
+  --ui-color-sec: #efefec;
+
+  background: transparent;
+  color: #2b2b2b;
+}
+
+/* 工具条：纸张感，去掉原版那层透明黑 */
+.th-variable-manager[data-mz-theme="example"] .th-toolbar-root {
+  border: 1px solid #dcc9a5 !important;
+  background: #efefec !important;
+  border-radius: 3px !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .th-toolbar-btn {
+  border: 1px solid #d5d5cf !important;
+  background: #f7f7f5 !important;
+  color: #625349 !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .th-toolbar-btn:hover:not(:disabled) {
+  border-color: #c9c9c4 !important;
+  background: #f3e6aa !important;
+  color: #743e1d !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .search-field {
+  border: 1px solid #d5d5cf !important;
+  background: #f7f7f5 !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .search-field:focus-within {
+  border-color: #c9c9c4 !important;
+  background: #fffbeb !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .search-field input {
+  color: #2b2b2b !important;
+}
+
+/* 树节点 */
+.th-variable-manager[data-mz-theme="example"] .tree-node,
+.th-variable-manager[data-mz-theme="example"] .tree-node__row {
+  border-color: #dcc9a5 !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] .tree-node:hover {
+  background: #efefec !important;
+}
+
+/* 输入框 */
+.th-variable-manager[data-mz-theme="example"] input,
+.th-variable-manager[data-mz-theme="example"] textarea,
+.th-variable-manager[data-mz-theme="example"] select {
+  background: #fffbeb !important;
+  border: 1px solid #d5d5cf !important;
+  color: #2b2b2b !important;
+  border-radius: 2px !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] input:focus,
+.th-variable-manager[data-mz-theme="example"] textarea:focus,
+.th-variable-manager[data-mz-theme="example"] select:focus {
+  outline: 2px solid #d8be79;
+  outline-offset: 1px;
+}
+
+/* 数值类型色：暖色系，别用默认的霓虹 */
+.th-variable-manager[data-mz-theme="example"] {
+  --string: #4a6b3a;
+  --object: #4a4a4a;
+  --editing: #c9c9c4;
+  --changed: #a33a2a;
+  --adding: #3a5a2e;
+  --placeholder: #aca391;
+}
+
+/* 分隔线与滚动条 */
+.th-variable-manager[data-mz-theme="example"] hr {
+  border: 0;
+  border-top: 1px dashed #dcc9a5 !important;
+}
+
+.th-variable-manager[data-mz-theme="example"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.th-variable-manager[data-mz-theme="example"] ::-webkit-scrollbar-thumb {
+  background: #d8be79;
+  border-radius: 4px;
+}
+
+.th-variable-manager[data-mz-theme="example"] ::-webkit-scrollbar-track {
+  background: transparent;
+}

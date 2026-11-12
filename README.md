@@ -14,43 +14,46 @@
 
 ```js
 // 表单模式：卡里给一份字段配置，面板变成表单
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.2/dist/index.js?theme=manfan&fields=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.2/dist/index.js?theme=example&fields=<你的配置>'
 
 // 树模式：什么都不给，退回原版变量树
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.2/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.2/dist/index.js?theme=example'
 ```
 
 两个参数都可省：
 
 | 参数 | 作用 | 省略时 |
 |---|---|---|
-| `theme` | 主题名，对应 `dist/themes/<名>.css` | `manfan` |
+| `theme` | 主题名，对应 `dist/themes/<名>.css` | `manfan`（仅为兼容旧卡；新卡请显式指定） |
 | `fields` | 字段配置名（`dist/fields/<名>.json`），或完整 URL | 走变量树 |
 
 **建议锁版本**，避免 jsdelivr 缓存：
 
 ```js
-import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?theme=manfan'
+import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@main/dist/index.js?theme=example'
 ```
 
 ## 主题
 
 | 主题 | 说明 |
 |---|---|
-| `manfan` | 迷宫饭 · 羊皮纸，与 `st-frontend` 同一套色 |
-| `_base` | 变量骨架，写新主题时先继承它 |
+| `_base` | 变量骨架，所有主题先 `@import` 它 |
+| `example` | 中性示例，无题材倾向；验证功能或改主题的起点 |
+| `manfan` | 某张卡的实际主题，见 [cards/manfan](cards/manfan/README.md) |
 
-写新主题：复制 `dist/themes/manfan.css`，改开头那组变量，文件放 `dist/themes/` 下，用 `?theme=你的名字`。
+主题按卡命名，一张卡一份，放在 `dist/themes/<卡名>.css`；卡的具体说明写在该卡的 `cards/<卡名>/README.md`。
+
+写新主题：复制 `dist/themes/example.css`，改开头那组变量，文件放 `dist/themes/` 下，用 `?theme=你的名字`。
 
 主题只覆盖 CSS 变量，不覆盖类名——原版所有组件读的都是 `--SmartTheme*` 这几个变量，改一处就够：
 
 ```css
-.th-variable-manager[data-mz-theme="manfan"]{
-  --SmartThemeBorderColor:#c8c3b1;
-  --SmartThemeBodyColor:#352722;
-  --SmartThemeEmColor:#8c5a2b;
-  --SmartThemeQuoteColor:#756342;
-  --SmartThemeBlurTintColor:#f3e8d2;
+.th-variable-manager[data-mz-theme="example"]{
+  --SmartThemeBorderColor:#d5d5cf;
+  --SmartThemeBodyColor:#2b2b2b;
+  --SmartThemeEmColor:#4a4a4a;
+  --SmartThemeQuoteColor:#6b6b66;
+  --SmartThemeBlurTintColor:#efefec;
 }
 ```
 
@@ -76,7 +79,7 @@ jsdelivr 有三个入口，中国大陆走 `testingcf` 最快，但它会出现�
 
 ```js
 const V = 'v0.7.2';
-const P = `azoth8010/jinshouzhi@${V}/dist/index.js?theme=manfan&fields=manfan`;
+const P = `azoth8010/jinshouzhi@${V}/dist/index.js?theme=example&fields=<你的配置>`;
 const HOSTS = [
   'https://testingcf.jsdelivr.net/gh/',
   'https://cdn.jsdelivr.net/gh/',
@@ -97,7 +100,7 @@ const HOSTS = [
 球没出来时，先确认加载的是哪一版——控制台应出现：
 
 ```
-[金手指] v0.7.2 · theme=manfan · fields=manfan
+[金手指] v0.7.2 · theme=example · fields=<你的配置>
 ```
 
 如果还是 v0.1.x，说明 jsdelivr 缓存了旧文件，换带版本号的地址。
