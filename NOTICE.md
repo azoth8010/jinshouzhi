@@ -10,4 +10,7 @@
 ## 本仓库
 
 - 外壳、加载器、主题：azoth8010（[@azoth8010](https://github.com/azoth8010)）
-- 协议：MIT（见 `LICENSE`）
+- 协议：**PolyForm Noncommercial 1.0.0**（见 `LICENSE`），仅限非商业使用
+
+> 上游 `lolocard` 的代码仍归原作者络络，按原作者给出的许可与授权使用（本仓库已获「允许二改」的授权）。
+> 本仓库新增的外壳、加载器、主题部分适用 PolyForm Noncommercial 1.0.0；该许可不改变上游原有的授权范围。

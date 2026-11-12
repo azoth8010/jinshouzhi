@@ -4,7 +4,7 @@
 
 - **原作者**：络络（[@lolodesu_](https://github.com/lolodesu_)），仓库 [`lolo-desu/lolocard`](https://github.com/lolo-desu/lolocard)
 - **悬浮球外壳与主题**：azoth8010（[@azoth8010](https://github.com/azoth8010)）
-- **协议**：MIT（见 `LICENSE`），原始归属见 `NOTICE.md`
+- **协议**：PolyForm Noncommercial 1.0.0（见 `LICENSE`，仅限非商业使用），原始归属见 `NOTICE.md`
 
 原版挂在「扩展设置面板」里，得先打开扩展才看得见。这个仓库不改它的功能，只做三件事：**搬进浮层、套主题、加一个球**。
 
