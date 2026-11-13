@@ -140,7 +140,7 @@ const HOSTS = [
 - 保存前会重新读一次楼层，避免用旧快照覆盖
 - 面板顶部可换楼层号，改历史楼的变量也行
 
-现成的配置放在 `cards/<卡名>/`，见 [cards/manfan](cards/manfan/README.md)。
+现成的配置放在 `cards/<卡名>/`，见 [cards/manfan](cards/manfan/README.md)（附 `preview.html`，静态演示，不起酒馆）。
 
 ## 悬浮球
 
