@@ -5,6 +5,7 @@
 | 项 | 值 |
 |---|---|
 | 主题 | `dist/themes/manfan.css`（羊皮纸，与 `st-frontend` 同一套色） |
+| 预览 | `cards/manfan/preview.html`（静态演示，不起酒馆） |
 | 配置文件 | `dist/fields/manfan.json` |
 | 卡名 | `迷宫饭 · 变量` |
 | 布局 | `页`（分 tab），共 5 页 |

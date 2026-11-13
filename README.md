@@ -24,7 +24,7 @@ import 'https://cdn.jsdelivr.net/gh/azoth8010/jinshouzhi@v0.7.2/dist/index.js?th
 
 | 参数 | 作用 | 省略时 |
 |---|---|---|
-| `theme` | 主题名，对应 `dist/themes/<名>.css` | `manfan`（仅为兼容旧卡；新卡请显式指定） |
+| `theme` | 主题名，对应 `dist/themes/<名>.css` | 省略时取 `manfan`（历史默认，仅为兼容旧卡）。文档示例一律用 `example`，新卡请显式指定 |
 | `fields` | 字段配置名（`dist/fields/<名>.json`），或完整 URL | 走变量树 |
 
 **建议锁版本**，避免 jsdelivr 缓存：
