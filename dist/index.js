@@ -253,9 +253,47 @@ function buildShell() {
   return { host, panel };
 }
 
+/* ---------- 变量作用域接管 ----------
+   原版读写都用 { type:'message', message_id:'latest' }。最新一条若是玩家消息，
+   它身上没有 stat_data：读出来是空的，写进去 MVU 也不认。改成定位「最近一条带
+   stat_data 的消息」，读写都落在那一层。 */
+function 定位变量楼层() {
+  try {
+    if (typeof getVariables !== 'function') return 'latest';
+    const ctx = (window.SillyTavern && window.SillyTavern.getContext) ? window.SillyTavern.getContext() : null;
+    const len = ctx && Array.isArray(ctx.chat) ? ctx.chat.length : 0;
+    for (let i = len - 1; i >= 0; i--) {
+      const v = getVariables({ type: 'message', message_id: i });
+      if (v && v.stat_data) return i;
+    }
+  } catch (e) { /* 落到 latest */ }
+  return 'latest';
+}
+
+function 接管变量作用域() {
+  if (window.__mzJszScoped) return;
+  const g = window.getVariables, u = window.updateVariablesWith;
+  if (typeof g !== 'function' || typeof u !== 'function') return;
+  const 是取最新 = (o) => !!o && o.type === 'message' &&
+    (o.message_id === 'latest' || o.message_id === undefined || o.message_id === null);
+  try {
+    window.getVariables = function (o) {
+      return 是取最新(o) ? g(Object.assign({}, o, { message_id: 定位变量楼层() })) : g(o);
+    };
+    window.updateVariablesWith = function (fn, o) {
+      return 是取最新(o) ? u(fn, Object.assign({}, o, { message_id: 定位变量楼层() })) : u(fn, o);
+    };
+    window.__mzJszScoped = 1;
+  } catch (e) {
+    console.warn('[金手指] 变量作用域接管失败，退回原版 latest：', e && e.message);
+  }
+}
+
 /* ---------- 主流程 ---------- */
 async function boot() {
   console.log('[金手指] v0.7.2 · theme=' + theme + (fieldsParam ? ' · fields=' + fieldsParam : ' · 树模式'));
+
+  接管变量作用域();
 
   loadTheme(theme);
   const shell = buildShell();
