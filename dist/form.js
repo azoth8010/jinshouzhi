@@ -504,6 +504,15 @@ export function mountForm(ctx) {
         clearDirty();
         say('已保存（getVariables 通道）');
       } catch (e) { say('保存失败', true); }
+    } else if (typeof updateVariablesWith === 'function') {
+      try {
+        await updateVariablesWith((v) => { v.stat_data = draft; return v; }, { type: 'message', message_id: msgId });
+        clearDirty();
+        say('已保存（updateVariablesWith 通道）');
+      } catch (e) {
+        console.error('[金手指] 保存失败', e);
+        say('保存失败：' + (e && e.message || e), true);
+      }
     } else {
       say('没有可用的写入接口', true);
     }
